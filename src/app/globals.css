@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+/*
+ * No colour values live here. src/lib/theme/css.ts generates them from src/config/brand.ts and
+ * src/data/products.ts (base palette, registered accent properties, one block per product world)
+ * and the root layout inlines that stylesheet. This file maps those variables onto Tailwind.
+ */
+
+@theme {
+  --color-*: initial;
+
+  --text-mega: clamp(7rem, 32vw, 28rem);
+  --text-mega--line-height: 0.8;
+  --text-mega--letter-spacing: -0.03em;
+  --text-mega--font-weight: 700;
+  --text-display: clamp(3.5rem, 14vw, 12rem);
+  --text-display--line-height: 0.9;
+  --text-display--letter-spacing: -0.01em;
+  --text-display--font-weight: 600;
+  --text-h1: clamp(2.5rem, 7vw, 5.5rem);
+  --text-h1--line-height: 1;
+  --text-h1--letter-spacing: 0.02em;
+  --text-h1--font-weight: 600;
+  --text-h2: clamp(2rem, 4.5vw, 3.75rem);
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: 0.04em;
+  --text-h2--font-weight: 500;
+  --text-h3: clamp(1.375rem, 2.4vw, 2rem);
+  --text-h3--line-height: 1.15;
+  --text-h3--letter-spacing: 0.06em;
+  --text-h3--font-weight: 500;
+  --text-editorial: clamp(1.25rem, 2.4vw, 2rem);
+  --text-editorial--line-height: 1.3;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.65;
+  --text-body: 1rem;
+  --text-body--line-height: 1.6;
+  /* Small text is always uppercase and widely tracked. */
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.32em;
+  --text-label--font-weight: 600;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.4;
+  --text-micro--letter-spacing: 0.48em;
+  --text-micro--font-weight: 600;
+
+  /* Keep in sync with src/lib/motion.ts. */
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-silk: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@theme inline {
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-cinzel), "Times New Roman", serif;
+  --font-editorial: var(--font-cormorant), Georgia, serif;
+
+  --color-ink-950: var(--ink-950);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-line: var(--line);
+  --color-ivory: var(--ivory);
+  --color-ivory-muted: var(--ivory-muted);
+
+  --color-gold-100: var(--gold-100);
+  --color-gold-200: var(--gold-200);
+  --color-gold-300: var(--gold-300);
+  --color-gold-400: var(--gold-400);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-gold-700: var(--gold-700);
+  --color-gold-800: var(--gold-800);
+  --color-gold-900: var(--gold-900);
+
+  --color-accent: var(--accent);
+  --color-accent-50: var(--accent-50);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-accent-900: var(--accent-900);
+  --color-accent-alt: var(--accent-alt);
+  --color-accent-glow: var(--accent-glow);
+  /* Use for accent-coloured text: guaranteed AA on every surface. Never put --accent on text. */
+  --color-accent-ink: var(--accent-ink);
+  --color-on-accent: var(--on-accent);
+  --color-accent-border: var(--accent-border);
+  --color-accent-soft: var(--accent-soft);
+}
+
+@layer base {
+  /* Derived from the registered tokens, so they morph with them. Redeclared on [data-theme] so
+     locally themed elements derive from their own accent, not the page's. */
+  :root,
+  [data-theme] {
+    --accent-gradient: linear-gradient(135deg, var(--accent-alt), var(--accent) 55%, var(--accent-glow));
+    --accent-soft: color-mix(in oklab, var(--accent) 15%, transparent);
+  }
+
+  :root {
+    --gold-metal: linear-gradient(
+      100deg,
+      var(--gold-700) 0%,
+      var(--gold-500) 22%,
+      var(--gold-100) 45%,
+      var(--gold-400) 58%,
+      var(--gold-700) 80%,
+      var(--gold-300) 100%
+    );
+    --gold-rule: linear-gradient(90deg, transparent, var(--gold-400), transparent);
+
+    color-scheme: dark;
+    background-color: var(--ink-950);
+    color: var(--ivory);
+    scrollbar-color: var(--accent-border) var(--ink-950);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow-x: clip;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--accent);
+    color: var(--on-accent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--gold-300);
+    outline-offset: 3px;
+  }
+
+  /* Static first: with reduced motion, theme swaps and everything else become instant. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Static atmosphere; also the fallback for the WebGL layer. */
+  .ambient-glow {
+    background:
+      radial-gradient(70% 55% at 50% -5%, color-mix(in oklab, var(--accent) 30%, transparent), transparent 70%),
+      radial-gradient(55% 45% at 100% 100%, color-mix(in oklab, var(--accent-alt) 55%, transparent), transparent 70%),
+      radial-gradient(45% 40% at 0% 80%, color-mix(in oklab, var(--gold-700) 16%, transparent), transparent 70%);
+  }
+
+  .vignette {
+    background: radial-gradient(
+      130% 100% at 50% 40%,
+      transparent 55%,
+      color-mix(in oklab, var(--ink-950) 75%, transparent) 100%
+    );
+  }
+
+  /* Film grain: one small noise tile, jittered with transform only. */
+  .grain {
+    inset: -4rem;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 1.2s steps(1) infinite;
+  }
+}
+
+@utility text-gold-metal {
+  background-image: var(--gold-metal);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@utility bg-gold-metal {
+  background-image: var(--gold-metal);
+}
+
+@utility bg-gold-rule {
+  background-image: var(--gold-rule);
+}
+
+@utility bg-accent-gradient {
+  background-image: var(--accent-gradient);
+}
+
+@keyframes grain {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-2rem, 1rem);
+  }
+  40% {
+    transform: translate(1.5rem, -2rem);
+  }
+  60% {
+    transform: translate(-1rem, 2rem);
+  }
+  80% {
+    transform: translate(2rem, 1.5rem);
+  }
+}
