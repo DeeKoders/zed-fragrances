@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "lenis/dist/lenis.css";
 import "./globals.css";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 import { Cursor } from "@/components/layout/Cursor";
 import { Footer } from "@/components/layout/Footer";
 import { GrainOverlay } from "@/components/layout/GrainOverlay";
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 {children}
               </main>
               <Footer />
+              <CartDrawer />
               <Preloader />
               <GrainOverlay />
               <Cursor />

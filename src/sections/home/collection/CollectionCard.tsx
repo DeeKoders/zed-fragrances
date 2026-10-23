@@ -15,13 +15,14 @@ import { WorldBackdrop } from "../hero/World";
 
 type CollectionCardProps = {
   product: Product;
-  comparing: boolean;
-  selected: boolean;
-  onToggle: () => void;
+  /** Compare mode: shows a checkbox. */
+  comparing?: boolean;
+  selected?: boolean;
+  onToggle?: () => void;
 };
 
 /** A product card: hover or focus previews its theme site-wide, tilts the bottle and reveals the notes. */
-export function CollectionCard({ product, comparing, selected, onToggle }: CollectionCardProps) {
+export function CollectionCard({ product, comparing = false, selected = false, onToggle }: CollectionCardProps) {
   const card = useRef<HTMLElement>(null);
   const pointer = usePointer(card);
   const reducedMotion = useReducedMotion();

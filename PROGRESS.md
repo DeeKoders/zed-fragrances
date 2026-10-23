@@ -30,8 +30,8 @@ Plan approved. Permission to build ALL remaining phases in one continuous run: 2
 | 3a Product worlds: chapters | done |
 | 3b Product worlds: details + textures | done |
 | 4 Finder, collection, marquee, banner, strip, reviews, footer | done |
-| 5 Product page, cart, WhatsApp | next |
-| 6 Polish, SEO, README | pending |
+| 5 Product page, cart, WhatsApp | done |
+| 6 Polish, SEO, README | next |
 
 ### Phase 2a + 2b (committed together)
 - Preloader: CSS gold mask reveal + shine + diamond rule + curtain, once per tab session, skipped for reduced motion. `src/components/layout/Preloader.tsx`, `src/lib/intro.ts`, `src/stores/intro.ts`.
@@ -123,6 +123,29 @@ Browser checklist:
 - Footer: newsletter accepts an email and shows the success message; invalid email shows the error.
 
 Known issues: newsletter handler is a placeholder (no provider). Marquee labels come from product + brand feature labels.
+
+### Phase 5: product page, cart drawer, WhatsApp ordering (plan)
+- `src/stores/cart.ts`: Zustand cart (slug, ml, quantity) persisted to localStorage, rehydrated after mount so SSR markup matches; drawer open state not persisted.
+- `src/lib/checkout.ts`: order builder (lines, totals, price-on-request flags) + a pluggable provider interface; the WhatsApp provider builds the prefilled message (items, sizes, quantities, total in the configured currency) and opens `https://wa.me/<number>?text=…`.
+- Cart drawer (Motion): slide-in, Esc/overlay close, focus trap, scroll lock, qty steppers, remove, subtotal, "Order on WhatsApp", empty state. Header bag button opens it with a live count.
+- `AddToBag` everywhere: chapter/finder "Order Now" adds the default size and opens the drawer.
+- `/fragrances/[slug]`: statically generated from data with per-product metadata; full theme takeover; world hero with tilting bottle; size selector; gallery with zoom lightbox; notes pyramid + vibe meters; product features strip; "Pairs well with"; sticky add-to-bag bar on phones.
+- All new copy in `brand.copy`.
+
+Done: `src/stores/cart.ts`, `src/lib/checkout.ts`, `src/components/cart/{CartDrawer,CartButton,AddToBag}.tsx`, `src/hooks/useDialog.ts`, `src/components/ui/Lightbox.tsx`, `src/app/fragrances/[slug]/page.tsx`, `src/sections/product/{ProductView,ProductGallery,SizeSelector}.tsx`. Chapter/finder "Order Now" now adds to the bag.
+
+Browser checklist:
+- `/fragrances/sovereign` and `/fragrances/dominator` load (statically generated); the whole site turns to that product's colours; going back home returns to gold.
+- Bottle tilts with the pointer; size tiles select (keyboard: arrow keys); price shows "Price on request" while 0.
+- "Add to bag" opens the drawer with the item; header badge counts it; qty −/+ and Remove work; reload keeps the bag.
+- Drawer: Esc / overlay / ✕ closes; Tab stays inside; page doesn't scroll behind it.
+- "Order on WhatsApp" (drawer and product page) opens wa.me with items, sizes, quantities and total (PKR) prefilled.
+- Gallery: images open in a lightbox; click zooms and follows the pointer; ←/→ and Esc work.
+- "Pairs well with" shows the other product's card.
+- Phones: after scrolling past the main buttons, a sticky bar with name, size/price and Add to bag slides up.
+- Home: "Order Now" in a chapter / finder result adds the default size and opens the drawer.
+
+Known issues: WhatsApp number is the placeholder 923000000000. Checkout keeps the bag after opening WhatsApp (intentional).
 
 ## Needs review
 - WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings.

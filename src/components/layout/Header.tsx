@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import { CartButton } from "@/components/cart/CartButton";
 import { Logo } from "@/components/ui/Logo";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/cn";
@@ -64,20 +65,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-1">
-          {/* Opens the cart drawer from Phase 5. */}
-          <button
-            type="button"
-            aria-label="Bag, 0 items"
-            className="relative grid size-11 place-items-center text-ivory transition-colors hover:text-gold-200"
-          >
-            <svg aria-hidden viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M5.5 8h13l-1.2 12.5H6.7L5.5 8Z" strokeLinejoin="round" />
-              <path d="M9 8V6.5a3 3 0 0 1 6 0V8" strokeLinecap="round" />
-            </svg>
-            <span className="absolute right-1 top-1 grid size-4 place-items-center rounded-full bg-accent text-[0.625rem] font-semibold text-on-accent">
-              0
-            </span>
-          </button>
+          <CartButton />
 
           <button
             ref={menuButton}

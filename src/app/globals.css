@@ -121,6 +121,11 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Modal dialogs (useDialog) lock the page. */
+  html[data-scroll-lock] {
+    overflow: hidden;
+  }
+
   /* Hold the page still under the preloader. The gutter stops a layout shift when the scrollbar returns. */
   html[data-intro="play"] {
     overflow: hidden;

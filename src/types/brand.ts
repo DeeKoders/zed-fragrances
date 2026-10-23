@@ -114,6 +114,41 @@ export type Brand = {
         error: string;
       };
     };
+    cart: {
+      title: string;
+      bag: string;
+      items: string;
+      empty: string;
+      emptyCta: string;
+      close: string;
+      remove: string;
+      increase: string;
+      decrease: string;
+      quantity: string;
+      subtotal: string;
+      onRequestNote: string;
+      checkout: string;
+      addToBag: string;
+      outOfStock: string;
+    };
+    product: {
+      size: string;
+      gallery: string;
+      openImage: string;
+      zoom: string;
+      close: string;
+      previous: string;
+      next: string;
+      pairs: string;
+      details: string;
+    };
+    /** Prefilled WhatsApp order message. */
+    whatsapp: {
+      greeting: string;
+      total: string;
+      onRequest: string;
+      footer: string;
+    };
     /** Labels the custom cursor shows over [data-cursor] elements. */
     cursor: { view: string; order: string };
   };
