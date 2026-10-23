@@ -104,12 +104,20 @@ export default function Atmosphere() {
       () => Object.keys(useAtmosphere.getState().covers).length === 0,
     );
     const unsubscribe = useAtmosphere.subscribe(loop.wake);
+    // Reveal only while a live context renders; a lost context falls back to the static layer.
+    const onLost = () => {
+      delete element.dataset.ready;
+      loop.stop();
+    };
+    element.addEventListener("webglcontextlost", onLost);
     element.dataset.ready = "";
 
     return () => {
       unsubscribe();
       loop.stop();
       layer.destroy();
+      element.removeEventListener("webglcontextlost", onLost);
+      delete element.dataset.ready;
     };
   }, []);
 

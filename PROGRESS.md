@@ -172,7 +172,7 @@ Known issues: see Needs review.
 All phases built, linted, built and committed.
 
 ## Needs review
-- WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings (a failing shader falls back to the static layer).
+- Fixed after the run: in dev (React Strict Mode) the WebGL layers forced a context loss on cleanup, then remounted onto the same dead context, which showed as a white canvas over the hero and page plus four `[webgl] null` warnings. `destroy()` no longer forces a loss, the support probe releases its own context, and canvases hide on `webglcontextlost`. Re-check the hero seam and background in the browser.
 - Nothing was viewed in a browser during this run (no dev server allowed): every layout, especially phones (390×844 and a short 375×667) in the pinned chapters, where the bottle-lift values were tuned by calculation.
 - Lighthouse scores (targets: mobile ≥90 performance, ≥95 accessibility/SEO) were not measured.
 - Procedural textures are rendered on the server and hydrated; they use arithmetic only so all engines should match, but check Safari's console for hydration warnings.

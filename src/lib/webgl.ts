@@ -20,7 +20,10 @@ let support: boolean | undefined;
 export function supportsWebGL() {
   if (support === undefined) {
     try {
-      support = Boolean(document.createElement("canvas").getContext("webgl"));
+      const probe = document.createElement("canvas").getContext("webgl");
+      support = Boolean(probe);
+      // Release the probe right away: browsers cap live WebGL contexts.
+      probe?.getExtension("WEBGL_lose_context")?.loseContext();
     } catch {
       support = false;
     }
@@ -84,7 +87,7 @@ export function createShaderLayer(
     premultipliedAlpha: true,
     powerPreference: "low-power",
   });
-  if (!gl) return null;
+  if (!gl || gl.isContextLost()) return null;
 
   const compile = (type: number, source: string) => {
     const shader = gl.createShader(type);
@@ -92,7 +95,7 @@ export function createShaderLayer(
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
     if (gl.getShaderParameter(shader, gl.COMPILE_STATUS)) return shader;
-    console.warn("[webgl]", gl.getShaderInfoLog(shader));
+    console.warn("[webgl]", gl.getShaderInfoLog(shader) || (gl.isContextLost() ? "context lost" : "compile failed"));
     gl.deleteShader(shader);
     return null;
   };
@@ -137,12 +140,13 @@ export function createShaderLayer(
       return ratio;
     },
     draw: () => gl.drawArrays(gl.TRIANGLES, 0, 3),
+    // Frees GPU resources but keeps the context: a canvas has only one, and React may remount
+    // onto the same canvas (Strict Mode), which would get a dead context if we forced a loss here.
     destroy: () => {
       gl.deleteBuffer(buffer);
       gl.deleteProgram(program);
       gl.deleteShader(vertex);
       gl.deleteShader(frag);
-      gl.getExtension("WEBGL_lose_context")?.loseContext();
     },
   };
 }
