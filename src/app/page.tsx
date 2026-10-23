@@ -1,12 +1,11 @@
 import { Hero } from "@/sections/home/hero/Hero";
-import { ShellPreview } from "@/sections/home/ShellPreview";
+import { ProductWorlds } from "@/sections/home/worlds/ProductWorlds";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      {/* Phase 1 placeholder: replaced by the product worlds in Phase 3. */}
-      <ShellPreview />
+      <ProductWorlds />
     </>
   );
 }

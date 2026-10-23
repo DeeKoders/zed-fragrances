@@ -27,8 +27,8 @@ Plan approved. Permission to build ALL remaining phases in one continuous run: 2
 | 2a Preloader | done |
 | 2b Split-world hero + cursor | done |
 | 2c WebGL background + seam | done |
-| 3a Product worlds: chapters | next |
-| 3b Product worlds: details + textures | pending |
+| 3a Product worlds: chapters | done |
+| 3b Product worlds: details + textures | next |
 | 4 Finder, collection, marquee, banner, strip, reviews, footer | pending |
 | 5 Product page, cart, WhatsApp | pending |
 | 6 Polish, SEO, README | pending |
@@ -58,6 +58,27 @@ Browser checklist:
 - DevTools Performance: no long tasks from the canvas; it stops in a background tab.
 
 Known issues: shaders were not compiled in a real browser during the build (no browser in this run). If a shader fails, the layer logs a `[webgl]` warning and the static fallback stays.
+
+### Phase 3a: product worlds, chapter structure (plan)
+- `src/sections/home/worlds/ProductWorlds.tsx` (#worlds) maps `products` to one `Chapter` each; replaces the Phase 1 ShellPreview.
+- Each chapter: locally themed stage (reuses the hero's WorldBackdrop), pinned with ScrollTrigger for ~200% (150% on phones), scrubbed timeline.
+- Theme: each chapter calls setTheme(slug) while it's in the middle of the viewport; leaving the section returns to the house theme.
+- Name: huge outlined type that fills left→right with the accent (counter-translated window, transform only).
+- Bottle: centre stage, rotates in Y and scales through the scroll, then eases out.
+- Chapter index, "Inspired by", story; slots for 3b (props, notes, meters, texture, CTA).
+- gsap.matchMedia: reduced motion = no pin, no scrub, everything visible and filled; theme still switches.
+- Refresh ScrollTrigger once the intro releases the scroll lock.
+
+Done: `src/sections/home/worlds/ProductWorlds.tsx`, `Chapter.tsx`; ShellPreview removed; `brand.copy.worlds`; `text-outline` / `text-accent-fill` utilities.
+
+Browser checklist:
+- Scrolling past the hero, each chapter pins (about two screens on desktop, 1.5 on phones); the site theme switches to that product as it reaches the middle and back to gold after the last one.
+- The huge name fills from gold outline to the accent colour left to right; the bottle turns from the side to face you, then turns away; index, "Inspired by" and story fade in.
+- Phones: name in the top third, bottle centred, story at the bottom with no overlap.
+- Reduced motion: no pinning, names already filled, theme still switches.
+- Header nav "Fragrances" jumps to the chapters.
+
+Known issues: none.
 
 ## Needs review
 - WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings.

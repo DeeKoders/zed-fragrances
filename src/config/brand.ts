@@ -79,6 +79,12 @@ export const brand: Brand = {
       previous: "Previous fragrance",
       next: "Next fragrance",
     },
+    worlds: {
+      title: "The Worlds",
+      order: "Order Now",
+      notes: { title: "Notes", top: "Top", heart: "Heart", base: "Base" },
+      vibe: { longevity: "Longevity", projection: "Projection", seasons: "Seasons", occasions: "Occasions" },
+    },
     cursor: { view: "View", order: "Order" },
   },
 };

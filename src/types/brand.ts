@@ -59,6 +59,14 @@ export type Brand = {
       previous: string;
       next: string;
     };
+    worlds: {
+      /** Heading of the product chapters section (read by assistive tech). */
+      title: string;
+      /** Second call to action in a chapter. */
+      order: string;
+      notes: { title: string; top: string; heart: string; base: string };
+      vibe: { longevity: string; projection: string; seasons: string; occasions: string };
+    };
     /** Labels the custom cursor shows over [data-cursor] elements. */
     cursor: { view: string; order: string };
   };
