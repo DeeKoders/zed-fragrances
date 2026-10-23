@@ -121,6 +121,27 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Hold the page still under the preloader. The gutter stops a layout shift when the scrollbar returns. */
+  html[data-intro="play"] {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+  }
+
+  /* The custom cursor (src/components/layout/Cursor.tsx) replaces the native one, except in text fields. */
+  html[data-custom-cursor],
+  html[data-custom-cursor] * {
+    cursor: none !important;
+  }
+
+  html[data-custom-cursor]
+    :is(
+      textarea,
+      [contenteditable="true"],
+      input:not([type="button"], [type="submit"], [type="reset"], [type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"])
+    ) {
+    cursor: text !important;
+  }
+
   body {
     overflow-x: clip;
     -webkit-font-smoothing: antialiased;
@@ -175,10 +196,290 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     animation: grain 1.2s steps(1) infinite;
   }
+
+  /*
+   * Preloader (src/components/layout/Preloader.tsx). Server-rendered but hidden unless the inline
+   * intro script (src/lib/intro.ts) marked <html> to play it. Pure CSS, transform and opacity only,
+   * so it starts at first paint and runs off the main thread while the page hydrates.
+   * Timeline, 1.8s = duration.preloader:
+   *   100-850   ink cover slides off the wordmark      650-1050  diamond pops in
+   *   550-1250  shine sweeps across the letters        750-1300  gold rules grow to full width
+   *   1250-1800 curtain splits on the rule; the diamond scales out
+   */
+  .preloader {
+    display: none;
+  }
+
+  html[data-intro="play"] .preloader {
+    display: block;
+  }
+
+  .preloader-top {
+    animation: preloader-lift 550ms var(--ease-silk) 1250ms both;
+  }
+
+  .preloader-bottom {
+    animation: preloader-drop 550ms var(--ease-silk) 1250ms both;
+  }
+
+  /* Warm light on the seam, bleeding into both halves. */
+  .preloader-glow {
+    animation: preloader-fade-in 900ms var(--ease-lux) 100ms both;
+  }
+
+  .preloader-glow[data-edge="bottom"] {
+    background: radial-gradient(
+      60% 70% at 50% 100%,
+      color-mix(in oklab, var(--gold-700) 32%, transparent),
+      transparent 70%
+    );
+  }
+
+  .preloader-glow[data-edge="top"] {
+    background: radial-gradient(
+      60% 50% at 50% 0%,
+      color-mix(in oklab, var(--gold-700) 22%, transparent),
+      transparent 70%
+    );
+  }
+
+  /* Feathered ink cover: fully over the wordmark at rest, slid off left to right. */
+  .preloader-cover {
+    left: -40%;
+    width: 160%;
+    background: linear-gradient(90deg, transparent, var(--ink-950) 20%);
+    animation: preloader-wipe 750ms var(--ease-silk) 100ms both;
+  }
+
+  /* Clipped to the letters by a luminance mask of the logo itself (black drops out). */
+  .preloader-shine {
+    mask-mode: luminance;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    mix-blend-mode: screen;
+  }
+
+  .preloader-shine-band {
+    background: linear-gradient(100deg, transparent 25%, var(--gold-100) 50%, transparent 75%);
+    animation: preloader-shine 700ms var(--ease-silk) 550ms both;
+  }
+
+  @supports not (mask-mode: luminance) {
+    .preloader-shine {
+      display: none;
+    }
+  }
+
+  .preloader-rule {
+    animation: preloader-rule 550ms var(--ease-lux) 750ms both;
+  }
+
+  .preloader-diamond {
+    animation:
+      preloader-pop 400ms var(--ease-lux) 650ms both,
+      preloader-pop-out 300ms var(--ease-silk) 1250ms forwards;
+  }
+
+  /*
+   * Hero worlds (src/sections/home/hero). Each world is themed locally, so the accent tokens below
+   * resolve to its own product. --focus is where its bottle stands, in hero coordinates.
+   */
+  .world {
+    --focus: 50% 45%;
+  }
+
+  .world[data-world="a"] {
+    --focus: 22% 24%;
+  }
+
+  .world[data-world="b"] {
+    --focus: 78% 76%;
+  }
+
+  @media (min-width: 768px) {
+    .world[data-world="a"] {
+      --focus: 25% 45%;
+    }
+
+    .world[data-world="b"] {
+      --focus: 75% 45%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .world[data-world="a"] {
+      --focus: 38% 48%;
+    }
+
+    .world[data-world="b"] {
+      --focus: 62% 48%;
+    }
+  }
+
+  .world-base {
+    background:
+      radial-gradient(75% 65% at var(--focus), color-mix(in oklab, var(--accent-alt) 90%, transparent), transparent 72%),
+      linear-gradient(180deg, color-mix(in oklab, var(--accent-alt) 35%, var(--ink-950)), var(--ink-950) 85%);
+  }
+
+  .world-glow {
+    opacity: 0.6;
+    background:
+      radial-gradient(30% 34% at var(--focus), color-mix(in oklab, var(--accent) 55%, transparent), transparent 72%),
+      radial-gradient(14% 16% at var(--focus), color-mix(in oklab, var(--accent-glow) 45%, transparent), transparent 70%);
+  }
+
+  .bokeh {
+    --bokeh: var(--accent-glow);
+    background: radial-gradient(
+      circle,
+      color-mix(in oklab, var(--bokeh) 55%, transparent),
+      color-mix(in oklab, var(--bokeh) 14%, transparent) 50%,
+      transparent 70%
+    );
+    animation: bokeh-drift 14s ease-in-out infinite alternate;
+  }
+
+  /* Warm worlds glow gold, cold worlds glint icy. */
+  .world[data-mood="warm"] .bokeh:nth-child(odd) {
+    --bokeh: var(--gold-300);
+  }
+
+  .world[data-mood="cold"] .bokeh:nth-child(3n) {
+    --bokeh: var(--ivory);
+  }
+
+  /* Placeholder seam (the WebGL seam replaces it in Phase 2c): a gold line with a soft shadow. */
+  .seam-line {
+    background: linear-gradient(90deg, transparent, var(--gold-300) 25% 75%, transparent);
+    filter: drop-shadow(0 0 0.6rem var(--gold-500));
+  }
+
+  .seam-line::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -2.5rem 0;
+    background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--ink-950) 55%, transparent), transparent);
+  }
+
+  @media (min-width: 768px) {
+    .seam-line {
+      background: linear-gradient(180deg, transparent, var(--gold-300) 25% 75%, transparent);
+    }
+
+    .seam-line::before {
+      inset: 0 -2.5rem;
+      background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--ink-950) 55%, transparent), transparent);
+    }
+  }
+
+  /* Floating bottle (src/components/product/FloatingBottle.tsx). */
+  .bottle-float {
+    animation: bottle-float 6s ease-in-out infinite alternate;
+  }
+
+  .bottle-contact {
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--accent-glow) 45%, transparent), transparent);
+  }
+
+  /* Wet-floor reflection. The element is flipped, so its local bottom is the bottle's base. */
+  .bottle-reflection {
+    display: none;
+    mask-image: linear-gradient(to top, rgb(0 0 0 / 0.4), transparent 40%);
+  }
+
+  @media (min-width: 768px) {
+    .bottle-reflection {
+      display: block;
+    }
+  }
+
+  /* Highlight clipped to the bottle's alpha. */
+  .bottle-sheen {
+    mask-size: contain;
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mix-blend-mode: screen;
+  }
+
+  .bottle-sheen-band {
+    background: linear-gradient(
+      100deg,
+      transparent 30%,
+      color-mix(in oklab, var(--gold-100) 30%, transparent) 50%,
+      transparent 70%
+    );
+  }
+
+  /* Each letter's glint pulses in turn, reading as a shimmer across the word. Opacity only. */
+  .zed-glint {
+    opacity: 0;
+    animation: zed-glint 8s ease-in-out calc(2.4s + var(--i, 0) * 140ms) infinite;
+  }
+
+  .scroll-cue-dot {
+    animation: scroll-cue 2.2s var(--ease-silk) infinite;
+  }
+
+  .hero-swap {
+    animation: hero-swap 900ms var(--ease-lux) both;
+  }
+
+  /* Off-screen sections stop their idle loops. */
+  [data-paused] :is(.bottle-float, .bokeh, .zed-glint, .scroll-cue-dot) {
+    animation-play-state: paused;
+  }
+
+  /*
+   * Hero entrance starting poses; useHeroEntrance animates from these exact values. The large
+   * type and bottles stay visible (they count for LCP). Restored after 6s if scripts never run.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-enter] {
+      animation: enter-failsafe 0s 6s forwards;
+    }
+
+    [data-enter="zed"] {
+      transform: translateY(24%) rotate(4deg);
+    }
+
+    [data-enter="lift"] {
+      transform: translateY(8%);
+    }
+
+    [data-enter="word"] {
+      transform: translateY(110%);
+    }
+
+    [data-enter="rise"] {
+      transform: translateY(60%);
+      opacity: 0;
+    }
+
+    [data-enter="fade"] {
+      opacity: 0;
+    }
+  }
 }
 
 @utility text-gold-metal {
   background-image: var(--gold-metal);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Brighter band for the glint layered over gold-metal type. */
+@utility text-gold-glint {
+  background-image: linear-gradient(
+    115deg,
+    transparent 35%,
+    var(--gold-100) 47%,
+    var(--ivory) 50%,
+    var(--gold-100) 53%,
+    transparent 65%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -211,5 +512,117 @@
   }
   80% {
     transform: translate(2rem, 1.5rem);
+  }
+}
+
+@keyframes preloader-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes preloader-wipe {
+  to {
+    translate: 100% 0;
+  }
+}
+
+@keyframes preloader-shine {
+  from {
+    translate: -100% 0;
+  }
+  to {
+    translate: 400% 0;
+  }
+}
+
+@keyframes preloader-rule {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes preloader-pop {
+  from {
+    scale: 0;
+  }
+}
+
+@keyframes preloader-pop-out {
+  from {
+    scale: 1;
+    opacity: 1;
+  }
+  to {
+    scale: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes preloader-lift {
+  to {
+    translate: 0 -100%;
+  }
+}
+
+@keyframes preloader-drop {
+  to {
+    translate: 0 100%;
+  }
+}
+
+@keyframes bottle-float {
+  from {
+    translate: 0 -1.5%;
+  }
+  to {
+    translate: 0 1.5%;
+  }
+}
+
+@keyframes bokeh-drift {
+  from {
+    translate: 0 0;
+    opacity: 0.45;
+  }
+  to {
+    translate: 2vmin -4vmin;
+    opacity: 1;
+  }
+}
+
+@keyframes zed-glint {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.85;
+  }
+  11% {
+    opacity: 0;
+  }
+}
+
+@keyframes scroll-cue {
+  from {
+    translate: 0 -100%;
+  }
+  to {
+    translate: 0 300%;
+  }
+}
+
+@keyframes hero-swap {
+  from {
+    opacity: 0;
+    translate: 0 1.5rem;
+  }
+}
+
+@keyframes enter-failsafe {
+  to {
+    transform: none;
+    opacity: 1;
   }
 }

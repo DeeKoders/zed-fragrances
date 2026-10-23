@@ -6,6 +6,7 @@ export const duration = {
   ui: 0.4,
   reveal: 0.9,
   theme: 0.8,
+  /** The CSS timeline in globals.css (.preloader*) must finish within this. */
   preloader: 1.8,
 } as const;
 

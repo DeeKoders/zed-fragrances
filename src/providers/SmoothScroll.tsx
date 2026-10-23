@@ -4,6 +4,7 @@ import Lenis from "lenis";
 import { createContext, useContext, useEffect, useRef, type ReactNode, type RefObject } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { useIntro } from "@/stores/intro";
 
 const HEADER_OFFSET = -80;
 
@@ -11,14 +12,16 @@ const LenisContext = createContext<RefObject<Lenis | null> | null>(null);
 
 /**
  * Lenis smooth scrolling, driven by GSAP's ticker so the page runs a single animation loop and
- * ScrollTrigger stays in sync. Off when the user prefers reduced motion.
+ * ScrollTrigger stays in sync. Off when the user prefers reduced motion. Starts once the intro is
+ * done, so nothing scrolls under the preloader.
  */
 export function SmoothScroll({ children }: { children: ReactNode }) {
   const lenis = useRef<Lenis | null>(null);
   const reducedMotion = useReducedMotion();
+  const introDone = useIntro((state) => state.status === "done");
 
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || !introDone) return;
 
     const instance = new Lenis({ autoRaf: false, lerp: 0.1, anchors: { offset: HEADER_OFFSET } });
     const raf = (time: number) => instance.raf(time * 1000);
@@ -33,7 +36,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       instance.destroy();
       lenis.current = null;
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, introDone]);
 
   return <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>;
 }

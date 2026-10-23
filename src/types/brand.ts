@@ -19,7 +19,7 @@ export type Brand = {
   logo: {
     /** The official logo file, untouched. */
     full: ImageAsset;
-    /** Crop of the official logo: ZED + FRAGRANCES. */
+    /** Crop of the official logo (ZED + FRAGRANCES) with its black background turned to transparency. */
     wordmark: ImageAsset;
   };
   /** Constant colours. Gold is the brand anchor and never morphs. */
@@ -48,4 +48,18 @@ export type Brand = {
     countdownTo: string | null;
   };
   disclaimer: string;
+  /** Interface copy, so components never hardcode words. */
+  copy: {
+    /** Prefix for a product's reference fragrance: "Inspired by Baccarat Rouge 540". */
+    inspiredBy: string;
+    hero: {
+      /** Product call to action, followed by the product name: "Discover Sovereign". */
+      cta: string;
+      scroll: string;
+      previous: string;
+      next: string;
+    };
+    /** Labels the custom cursor shows over [data-cursor] elements. */
+    cursor: { view: string; order: string };
+  };
 };

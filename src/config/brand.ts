@@ -29,7 +29,8 @@ export const brand: Brand = {
 
   logo: {
     full: { src: "/brand/zed-logo.png", width: 1254, height: 1254 },
-    wordmark: { src: "/brand/zed-wordmark.png", width: 914, height: 445 },
+    // Generated from zed-wordmark.png (black → transparent); identical to it on black.
+    wordmark: { src: "/brand/zed-wordmark-alpha.png", width: 914, height: 445 },
   },
 
   palette: {
@@ -69,4 +70,15 @@ export const brand: Brand = {
 
   disclaimer:
     "ZED Fragrances is not affiliated with or endorsed by the brands referenced. Names are used for comparison only; all trademarks belong to their respective owners.",
+
+  copy: {
+    inspiredBy: "Inspired by",
+    hero: {
+      cta: "Discover",
+      scroll: "Scroll",
+      previous: "Previous fragrance",
+      next: "Next fragrance",
+    },
+    cursor: { view: "View", order: "Order" },
+  },
 };

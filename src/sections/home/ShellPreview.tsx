@@ -1,6 +1,7 @@
 "use client";
 
 import { Bottle } from "@/components/product/Bottle";
+import { brand } from "@/config/brand";
 import { products } from "@/data/products";
 import { cn } from "@/lib/cn";
 import { ACCENT_STOPS, HOUSE_THEME } from "@/lib/theme/types";
@@ -45,7 +46,7 @@ export function ShellPreview() {
                 <article className="grid h-full grid-cols-[6rem_1fr] items-center gap-5 border border-accent-border bg-ink-900/80 p-5 sm:grid-cols-[8rem_1fr] md:gap-8 md:p-8">
                   <Bottle product={product} sizes="128px" className="drop-shadow-[0_0_2rem_var(--accent-soft)]" />
                   <div>
-                    <p className="text-micro uppercase text-accent-ink">Inspired by {product.inspiredBy}</p>
+                    <p className="text-micro uppercase text-accent-ink">{brand.copy.inspiredBy} {product.inspiredBy}</p>
                     <h3 className="mt-3 font-display text-h3 uppercase">{product.name}</h3>
                     <p className="mt-2 font-editorial text-editorial italic text-ivory-muted">{product.tagline}</p>
                     <div aria-hidden className="mt-6 flex h-2.5 overflow-hidden rounded-full">

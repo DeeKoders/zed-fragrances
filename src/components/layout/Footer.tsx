@@ -30,7 +30,7 @@ export function Footer() {
                   <span className="font-display text-xl uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-gold-200">
                     {product.name}
                   </span>
-                  <span className="mt-1 block text-sm text-ivory-muted">Inspired by {product.inspiredBy}</span>
+                  <span className="mt-1 block text-sm text-ivory-muted">{brand.copy.inspiredBy} {product.inspiredBy}</span>
                 </Link>
               </li>
             ))}

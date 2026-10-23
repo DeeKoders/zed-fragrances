@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "lenis/dist/lenis.css";
 import "./globals.css";
+import { Cursor } from "@/components/layout/Cursor";
 import { Footer } from "@/components/layout/Footer";
 import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { Header } from "@/components/layout/Header";
+import { Preloader } from "@/components/layout/Preloader";
 import { AtmosphereFallback } from "@/components/webgl/Fallback";
 import { brand } from "@/config/brand";
+import { introScript } from "@/lib/intro";
 import { getThemeRegistry } from "@/lib/theme/css";
 import { SmoothScroll } from "@/providers/SmoothScroll";
 import { ThemeProvider } from "@/providers/ThemeProvider";
@@ -32,6 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <head>
         <style id="zed-theme" dangerouslySetInnerHTML={{ __html: css }} />
+        <script id="zed-intro" dangerouslySetInnerHTML={{ __html: introScript }} />
       </head>
       <body className="font-sans text-body">
         <ThemeProvider themes={themes}>
@@ -48,7 +52,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               {children}
             </main>
             <Footer />
+            <Preloader />
             <GrainOverlay />
+            <Cursor />
           </SmoothScroll>
         </ThemeProvider>
       </body>
