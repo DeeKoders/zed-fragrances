@@ -26,8 +26,8 @@ Plan approved. Permission to build ALL remaining phases in one continuous run: 2
 | 1 Scaffold + theme engine | done (4d5b8a3) |
 | 2a Preloader | done |
 | 2b Split-world hero + cursor | done |
-| 2c WebGL background + seam | next |
-| 3a Product worlds: chapters | pending |
+| 2c WebGL background + seam | done |
+| 3a Product worlds: chapters | next |
 | 3b Product worlds: details + textures | pending |
 | 4 Finder, collection, marquee, banner, strip, reviews, footer | pending |
 | 5 Product page, cart, WhatsApp | pending |
@@ -45,5 +45,19 @@ Browser checklist (390 / 768 / 1440):
 - Bottles tilt, letters drift, glint passes over ZED; reduced motion = still 50/50, native cursor.
 - Header logo has no black box over the worlds.
 
+### Phase 2c: WebGL background + shader seam
+Plan: raw WebGL (no three.js) full-screen fragment shaders; site-wide atmosphere (smoke, rays, dust) tinted by the active theme with an 800ms colour morph; shader seam in the split hero driven by the live balance; lazy-loaded after the intro when idle; static fallbacks (CSS glow, CSS seam line) stay underneath; DPR capped, pauses in hidden tabs, off-screen, or while the opaque hero fills the screen; no WebGL for reduced motion.
+
+Done:
+- `src/lib/webgl.ts` (shader layer + loop helpers), `src/components/webgl/Atmosphere.tsx`, `SeamCanvas.tsx`, lazy wrappers `WebGLLayer.tsx` / `SeamLayer.tsx`, `src/hooks/useWebGLReady.ts`, `src/hooks/useAtmosphereCover.ts`, `src/stores/atmosphere.ts`.
+
+Browser checklist:
+- A second or so after the intro, the hero seam turns into a wandering gold line with each world's glow on its side, smoke and sparks; it brightens as one world wins and follows the seam (vertical on desktop, horizontal on phones).
+- Below the hero, the background shows faint smoke, light rays and dust; it morphs colour when the theme changes (hover the theme demo cards).
+- Reduced motion or no WebGL: CSS seam line and static glow only.
+- DevTools Performance: no long tasks from the canvas; it stops in a background tab.
+
+Known issues: shaders were not compiled in a real browser during the build (no browser in this run). If a shader fails, the layer logs a `[webgl]` warning and the static fallback stays.
+
 ## Needs review
-- (none yet)
+- WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings.

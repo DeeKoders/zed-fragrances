@@ -7,6 +7,7 @@ import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { Header } from "@/components/layout/Header";
 import { Preloader } from "@/components/layout/Preloader";
 import { AtmosphereFallback } from "@/components/webgl/Fallback";
+import { WebGLLayer } from "@/components/webgl/WebGLLayer";
 import { brand } from "@/config/brand";
 import { introScript } from "@/lib/intro";
 import { getThemeRegistry } from "@/lib/theme/css";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               Skip to content
             </a>
             <AtmosphereFallback />
+            <WebGLLayer />
             <Header />
             <main id="main" tabIndex={-1} className="outline-none">
               {children}

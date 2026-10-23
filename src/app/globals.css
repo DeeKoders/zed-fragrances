@@ -349,7 +349,7 @@
     --bokeh: var(--ivory);
   }
 
-  /* Placeholder seam (the WebGL seam replaces it in Phase 2c): a gold line with a soft shadow. */
+  /* Static seam: a gold line with a soft shadow. The fallback for the shader seam (SeamCanvas). */
   .seam-line {
     background: linear-gradient(90deg, transparent, var(--gold-300) 25% 75%, transparent);
     filter: drop-shadow(0 0 0.6rem var(--gold-500));
@@ -361,6 +361,12 @@
     z-index: -1;
     inset: -2.5rem 0;
     background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--ink-950) 55%, transparent), transparent);
+  }
+
+  /* Hand over to the shader seam once it has loaded. */
+  [data-hero]:has([data-seam-canvas][data-ready]) .seam-line {
+    visibility: hidden;
+    transition: visibility 0s 0.6s;
   }
 
   @media (min-width: 768px) {

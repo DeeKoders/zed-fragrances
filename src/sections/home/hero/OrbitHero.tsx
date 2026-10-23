@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { FloatingBottle } from "@/components/product/FloatingBottle";
 import { brand } from "@/config/brand";
+import { useAtmosphereCover } from "@/hooks/useAtmosphereCover";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { usePointer } from "@/hooks/usePointer";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -58,6 +59,7 @@ export function OrbitHero({ products }: { products: Product[] }) {
   const pointer = usePointer(section);
   const { previewTheme } = useTheme();
   useHeroEntrance(section);
+  useAtmosphereCover(section);
 
   const radius = wide ? RADIUS.wide : RADIUS.narrow;
   const current = products[active];

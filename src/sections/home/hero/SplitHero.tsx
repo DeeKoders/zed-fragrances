@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect, useId, useRef, type RefObject } from "react";
 import { FloatingBottle } from "@/components/product/FloatingBottle";
+import type { SeamState } from "@/components/webgl/SeamCanvas";
+import { SeamLayer } from "@/components/webgl/SeamLayer";
+import { useAtmosphereCover } from "@/hooks/useAtmosphereCover";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { usePointer, type Pointer } from "@/hooks/usePointer";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -32,8 +35,8 @@ const SWAY_SPEED = 0.6;
 /** Share of the hero that must be on screen for it to own the theme. */
 const IN_VIEW = 0.35;
 
-/** Live balance between the worlds (-1 first, 1 second). Read per frame, e.g. by the WebGL seam. */
-export const heroBalance = { value: 0 };
+/** Live seam state (balance -1 first … 1 second, seam position in %), read per frame by the WebGL seam. */
+const heroState: SeamState = { balance: 0, seam: 50, axis: "x" };
 
 const shape = (raw: number) =>
   Math.sign(raw) * Math.min(1, Math.max(0, (Math.abs(raw) - DEAD_ZONE) / 0.6));
@@ -58,6 +61,7 @@ export function SplitHero({ products }: { products: [Product, Product] }) {
   const pointer = usePointer(section, reducedMotion ? Infinity : 7);
   const { previewTheme } = useTheme();
   useHeroEntrance(section);
+  useAtmosphereCover(section);
 
   useEffect(() => {
     const root = section.current;
@@ -127,7 +131,6 @@ export function SplitHero({ products }: { products: [Product, Product] }) {
         focus ?? (active ? shape(axis === "x" ? x : y) : (tap ?? (reducedMotion ? 0 : Math.sin(time * SWAY_SPEED) * SWAY)));
 
       balance += (target - balance) * (reducedMotion ? 1 : 1 - Math.exp((-deltaTime / 1000) * 5));
-      heroBalance.value = balance;
 
       if (!engaged || !inView) setFavoured(null);
       else if (balance < -TAKEOVER) setFavoured(0);
@@ -136,6 +139,9 @@ export function SplitHero({ products }: { products: [Product, Product] }) {
 
       const push = axis === "y" ? trigger.progress * SCROLL_PUSH : 0;
       const seamAt = Math.min(90, Math.max(10, 50 - balance * SEAM_SHIFT - push));
+      heroState.balance = balance;
+      heroState.seam = reducedMotion ? 50 : seamAt;
+      heroState.axis = axis;
       const key = `${seamAt.toFixed(2)} ${balance.toFixed(3)}`;
       if (key === last) return;
       last = key;
@@ -188,7 +194,7 @@ export function SplitHero({ products }: { products: [Product, Product] }) {
         element.style.opacity = "";
       });
       setFavoured(null);
-      heroBalance.value = 0;
+      heroState.balance = 0;
     };
   }, [first.slug, second.slug, wide, reducedMotion, pointer, previewTheme]);
 
@@ -198,6 +204,7 @@ export function SplitHero({ products }: { products: [Product, Product] }) {
     <section
       ref={section}
       aria-labelledby={titleId}
+      data-hero
       className="relative isolate h-svh min-h-[36rem] overflow-hidden bg-ink-950"
     >
       <WorldBackdrop product={first} side="a" />
@@ -216,6 +223,7 @@ export function SplitHero({ products }: { products: [Product, Product] }) {
           className="seam-line absolute inset-x-0 top-0 h-px md:inset-x-auto md:inset-y-0 md:left-0 md:h-auto md:w-px"
         />
       </div>
+      <SeamLayer slugs={[first.slug, second.slug]} state={heroState} />
       <HeroScrim />
 
       <KineticZed pointer={motionPointer} className="absolute inset-x-0 top-1/2 z-[2] -translate-y-1/2" />
