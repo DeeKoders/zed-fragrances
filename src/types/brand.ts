@@ -10,6 +10,8 @@ export type Brand = {
   description: string;
   /** Canonical site URL, used for metadata, sitemap and OG images. */
   siteUrl: string;
+  /** Google Search Console HTML-tag verification token. */
+  googleSiteVerification?: string;
   taglines: {
     primary: string;
     quality: string;

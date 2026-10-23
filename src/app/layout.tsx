@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     url: "/",
   },
   twitter: { card: "summary_large_image" },
+  verification: { google: brand.googleSiteVerification },
 };
 
 export const viewport: Viewport = {

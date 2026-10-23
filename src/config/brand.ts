@@ -17,8 +17,9 @@ export const brand: Brand = {
   shortName: "ZED",
   description:
     "Luxury inspired-by perfumes with their own worlds. Sovereign and Dominator: signature scents for a distinctive you.",
-  // Placeholder until the real domain is live.
-  siteUrl: "https://zedfragrances.com",
+  // Switch to the custom domain once it's connected in Netlify.
+  siteUrl: "https://zed-fragrances.netlify.app",
+  googleSiteVerification: "i2TJLc-XzjkgUiYBi5vrcjqP0BUOevrKiiGN98J5CJU",
 
   taglines: {
     primary: "Signature Scents. Distinctive You.",
