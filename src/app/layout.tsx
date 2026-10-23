@@ -6,6 +6,7 @@ import { Cursor } from "@/components/layout/Cursor";
 import { Footer } from "@/components/layout/Footer";
 import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { Header } from "@/components/layout/Header";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { Preloader } from "@/components/layout/Preloader";
 import { AtmosphereFallback } from "@/components/webgl/Fallback";
 import { WebGLLayer } from "@/components/webgl/WebGLLayer";
@@ -24,6 +25,16 @@ export const metadata: Metadata = {
     template: `%s | ${brand.name}`,
   },
   description: brand.description,
+  applicationName: brand.name,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: brand.name,
+    title: `${brand.name} | ${brand.taglines.primary}`,
+    description: brand.description,
+    url: "/",
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export const viewport: Viewport = {
@@ -58,6 +69,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </main>
               <Footer />
               <CartDrawer />
+              <PageTransition />
               <Preloader />
               <GrainOverlay />
               <Cursor />

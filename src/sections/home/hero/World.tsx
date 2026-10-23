@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Magnetic } from "@/components/motion/Magnetic";
 import { Texture } from "@/components/textures/Texture";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/cn";
@@ -80,7 +81,7 @@ export function WorldBackdrop({ product, side, className }: WorldBackdropProps) 
 }
 
 const ctaClass =
-  "inline-flex items-center gap-3 border border-accent-border px-5 py-3.5 text-label uppercase text-ivory transition-colors duration-500 hover:border-accent hover:bg-accent hover:text-on-accent focus-visible:bg-accent focus-visible:text-on-accent";
+  "sheen inline-flex items-center gap-3 border border-accent-border px-5 py-3.5 text-label uppercase text-ivory transition-colors duration-500 hover:border-accent hover:bg-accent hover:text-on-accent focus-visible:bg-accent focus-visible:text-on-accent";
 
 type WorldCopyProps = {
   product: Product;
@@ -105,11 +106,13 @@ export function WorldCopy({ product, className, enter = true }: WorldCopyProps) 
         {product.tagline}
       </p>
       <div data-enter={rise} className="mt-5 md:mt-7">
-        <Link href={productHref(product.slug)} data-cursor="view" className={ctaClass}>
-          {brand.copy.hero.cta}
-          <span className="sr-only md:not-sr-only">{` ${product.name}`}</span>
-          <span aria-hidden className="size-1.5 rotate-45 bg-gold-300" />
-        </Link>
+        <Magnetic>
+          <Link href={productHref(product.slug)} data-cursor="view" className={ctaClass}>
+            {brand.copy.hero.cta}
+            <span className="sr-only md:not-sr-only">{` ${product.name}`}</span>
+            <span aria-hidden className="size-1.5 rotate-45 bg-gold-300" />
+          </Link>
+        </Magnetic>
       </div>
     </div>
   );

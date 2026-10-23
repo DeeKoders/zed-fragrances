@@ -55,6 +55,7 @@ export type Brand = {
   /** Interface copy, so components never hardcode words. */
   copy: {
     skipToContent: string;
+    nav: { main: string; mobile: string; menu: string; close: string; home: string };
     /** Prefix for a product's reference fragrance: "Inspired by Baccarat Rouge 540". */
     inspiredBy: string;
     hero: {

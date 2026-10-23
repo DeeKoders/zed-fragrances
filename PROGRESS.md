@@ -31,7 +31,7 @@ Plan approved. Permission to build ALL remaining phases in one continuous run: 2
 | 3b Product worlds: details + textures | done |
 | 4 Finder, collection, marquee, banner, strip, reviews, footer | done |
 | 5 Product page, cart, WhatsApp | done |
-| 6 Polish, SEO, README | next |
+| 6 Polish, SEO, README | done |
 
 ### Phase 2a + 2b (committed together)
 - Preloader: CSS gold mask reveal + shine + diamond rule + curtain, once per tab session, skipped for reduced motion. `src/components/layout/Preloader.tsx`, `src/lib/intro.ts`, `src/stores/intro.ts`.
@@ -147,5 +147,37 @@ Browser checklist:
 
 Known issues: WhatsApp number is the placeholder 923000000000. Checkout keeps the bag after opening WhatsApp (intentional).
 
+### Phase 6: polish, performance, accessibility, SEO, README (plan)
+- Route transitions: theme-coloured ink wipe (cover → navigate → reveal) by intercepting internal link clicks; off for reduced motion; failsafe reveal.
+- Magnetic CTAs (Motion springs, fine pointers only) and a gold sheen sweep on hover (transform only).
+- Split-text reveals on section headings (`SplitHeading`), occasional gold shimmer over the header wordmark.
+- Accessibility: remaining hardcoded UI strings (header menu, nav labels) into `brand.copy`; check landmarks, focus, dialogs, reduced motion.
+- Performance: confirm image sizes/formats, lazy WebGL, no layout-property animations, idle loops paused off-screen.
+- SEO: default OG image generated from the official logo, per-product OG images (`opengraph-image.tsx`), JSON-LD Product schema, `sitemap.ts`, `robots.ts`, canonical URLs, Twitter cards.
+- README: add a product (full example), brand colours/copy/taglines/drop banner, WhatsApp + currency, real images, Vercel deploy, placeholder emblems to replace.
+
+Done: `src/components/layout/PageTransition.tsx`, `src/components/motion/{Magnetic,SplitHeading}.tsx`, `.sheen` buttons, header logo shimmer, header strings in `brand.copy.nav`; `src/app/{sitemap,robots}.ts`, `src/app/opengraph-image.png` (from the official logo), `src/app/fragrances/[slug]/opengraph-image.tsx` (prerendered), JSON-LD Product on product pages, canonical + Open Graph + Twitter metadata, `src/lib/site.ts`; README rewritten.
+
+Browser checklist:
+- Clicking between home and a product page: accent ink wipes up, the new page appears under it at the top, ink lifts; back/forward navigate normally.
+- Main CTAs lean toward the cursor and a gold sheen sweeps across on hover.
+- Section headings (finder, collection, product details, pairs) rise word by word when scrolled into view.
+- Header logo catches a gold glint every ~9 seconds.
+- `/sitemap.xml`, `/robots.txt`, `/opengraph-image.png`, `/fragrances/sovereign/opengraph-image` respond; product page source contains `application/ld+json`.
+- Lighthouse (mobile) on `/` and a product page.
+
+Known issues: see Needs review.
+
+## Run complete
+All phases built, linted, built and committed.
+
 ## Needs review
-- WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings.
+- WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings (a failing shader falls back to the static layer).
+- Nothing was viewed in a browser during this run (no dev server allowed): every layout, especially phones (390×844 and a short 375×667) in the pinned chapters, where the bottle-lift values were tuned by calculation.
+- Lighthouse scores (targets: mobile ≥90 performance, ≥95 accessibility/SEO) were not measured.
+- Procedural textures are rendered on the server and hydrated; they use arithmetic only so all engines should match, but check Safari's console for hydration warnings.
+- Feature-strip icons draw in by animating `stroke-dashoffset` (a paint property, not transform/opacity), as the brief asks for a line-draw; small icons only.
+- Product OG images use the default sans font (Cinzel isn't embedded in the image renderer).
+- Scent Finder "match %" is the honest share of matched tags, so mixed answers can show modest numbers.
+- Page transitions intercept internal link clicks globally; browser back/forward isn't animated.
+- Placeholder content: emblems (`lotus.svg`, `lion-crowned.svg`), ingredient props (orbs), bottle crops and gallery (reference posters), prices (0), WhatsApp number, socials, `siteUrl`, newsletter handler.

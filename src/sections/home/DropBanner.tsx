@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useId } from "react";
+import { Magnetic } from "@/components/motion/Magnetic";
 import { DiamondDivider } from "@/components/ui/DiamondDivider";
 import { brand } from "@/config/brand";
 import { useNow } from "@/hooks/useNow";
@@ -89,13 +90,15 @@ export function DropBanner() {
 
         {countdownTo && <Countdown to={countdownTo} />}
 
-        <Link
-          href="/#collection"
-          className="mt-12 inline-flex items-center gap-3 bg-gold-300 px-6 py-4 text-label uppercase text-ink-950 transition-colors hover:bg-gold-200"
-        >
-          {copy.cta}
-          <span aria-hidden className="size-1.5 rotate-45 bg-ink-950" />
-        </Link>
+        <Magnetic className="mt-12">
+          <Link
+            href="/#collection"
+            className="sheen inline-flex items-center gap-3 bg-gold-300 px-6 py-4 text-label uppercase text-ink-950 transition-colors hover:bg-gold-200"
+          >
+            {copy.cta}
+            <span aria-hidden className="size-1.5 rotate-45 bg-ink-950" />
+          </Link>
+        </Magnetic>
       </div>
     </section>
   );

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { AddToBag } from "@/components/cart/AddToBag";
 import { FloatingBottle } from "@/components/product/FloatingBottle";
 import { IngredientLayers } from "@/components/product/IngredientLayers";
+import { SplitHeading } from "@/components/motion/SplitHeading";
 import { NotesPyramid } from "@/components/product/NotesPyramid";
 import { VibeMeters } from "@/components/product/VibeMeters";
 import { FeatureIcon } from "@/components/ui/FeatureIcon";
@@ -107,7 +108,7 @@ export function ProductView({ product, pairs }: { product: Product; pairs: Produ
                   data-cursor="order"
                   disabled={!size?.inStock}
                   onClick={buyNow}
-                  className="inline-flex items-center gap-3 border border-gold-600 px-5 py-3.5 text-label uppercase text-gold-200 transition-colors hover:border-gold-300 hover:text-gold-100 disabled:opacity-40"
+                  className="sheen inline-flex items-center gap-3 border border-gold-600 px-5 py-3.5 text-label uppercase text-gold-200 transition-colors hover:border-gold-300 hover:text-gold-100 disabled:opacity-40"
                 >
                   {copy.cart.checkout}
                 </button>
@@ -134,9 +135,7 @@ export function ProductView({ product, pairs }: { product: Product; pairs: Produ
       </section>
 
       <section aria-labelledby={`${product.slug}-details`} className="mx-auto max-w-7xl px-5 py-20 md:px-10 md:py-28">
-        <h2 id={`${product.slug}-details`} className="font-display text-h2 uppercase">
-          {copy.product.details}
-        </h2>
+        <SplitHeading id={`${product.slug}-details`} text={copy.product.details} className="font-display text-h2 uppercase" />
         <div className="mt-10 grid gap-12 md:grid-cols-2">
           <NotesPyramid product={product} className="max-w-md" />
           <VibeMeters product={product} className="max-w-md" />
@@ -147,9 +146,7 @@ export function ProductView({ product, pairs }: { product: Product; pairs: Produ
 
       {pairs.length > 0 && (
         <section aria-labelledby={`${product.slug}-pairs`} className="mx-auto max-w-7xl px-5 pb-28 md:px-10">
-          <h2 id={`${product.slug}-pairs`} className="font-display text-h2 uppercase">
-            {copy.product.pairs}
-          </h2>
+          <SplitHeading id={`${product.slug}-pairs`} text={copy.product.pairs} className="font-display text-h2 uppercase" />
           <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pairs.map((pair) => (
               <li key={pair.slug}>

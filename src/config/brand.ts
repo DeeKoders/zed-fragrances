@@ -82,6 +82,7 @@ export const brand: Brand = {
 
   copy: {
     skipToContent: "Skip to content",
+    nav: { main: "Main", mobile: "Mobile", menu: "Menu", close: "Close", home: "ZED Fragrances home" },
     inspiredBy: "Inspired by",
     hero: {
       cta: "Discover",

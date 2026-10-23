@@ -50,9 +50,9 @@ export function Header() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 md:h-20 md:px-10">
-        <Logo eager sizes="(min-width: 768px) 128px, 96px" className="w-24 md:w-32" />
+        <Logo eager shimmer sizes="(min-width: 768px) 128px, 96px" className="w-24 md:w-32" />
 
-        <nav aria-label="Main" className="hidden md:block">
+        <nav aria-label={brand.copy.nav.main} className="hidden md:block">
           <ul className="flex items-center gap-10">
             {brand.nav.map((item) => (
               <li key={item.href}>
@@ -75,14 +75,14 @@ export function Header() {
             onClick={() => setMenuOpen((open) => !open)}
             className="px-3 py-3 text-label uppercase text-ivory md:hidden"
           >
-            {menuOpen ? "Close" : "Menu"}
+            {menuOpen ? brand.copy.nav.close : brand.copy.nav.menu}
           </button>
         </div>
       </div>
 
       <nav
         id={menuId}
-        aria-label="Mobile"
+        aria-label={brand.copy.nav.mobile}
         hidden={!menuOpen}
         className="border-t border-line px-5 pb-8 pt-6 md:hidden"
       >

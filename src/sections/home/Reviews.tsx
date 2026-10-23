@@ -1,3 +1,4 @@
+import { SplitHeading } from "@/components/motion/SplitHeading";
 import { brand } from "@/config/brand";
 import { getProduct } from "@/data/products";
 import { reviews } from "@/data/reviews";
@@ -13,9 +14,7 @@ export function Reviews() {
     <section aria-labelledby="reviews-title" className="px-5 py-24 md:px-10 md:py-32">
       <div className="mx-auto max-w-7xl">
         <p className="text-micro uppercase text-gold-400">{copy.eyebrow}</p>
-        <h2 id="reviews-title" className="mt-4 font-display text-h2 uppercase">
-          {copy.title}
-        </h2>
+        <SplitHeading id="reviews-title" text={copy.title} className="mt-4 font-display text-h2 uppercase" />
         <ul className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {reviews.map((review, index) => {
             const product = review.product ? getProduct(review.product) : undefined;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
+import { SplitHeading } from "@/components/motion/SplitHeading";
 import { brand } from "@/config/brand";
 import { products } from "@/data/products";
 import { cn } from "@/lib/cn";
@@ -29,9 +30,7 @@ export function Collection() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="text-micro uppercase text-gold-400">{copy.eyebrow}</p>
-            <h2 id={titleId} className="mt-4 font-display text-h2 uppercase">
-              {copy.title}
-            </h2>
+            <SplitHeading id={titleId} text={copy.title} className="mt-4 font-display text-h2 uppercase" />
           </div>
           {products.length > 1 && (
             <div className="flex items-center gap-4">

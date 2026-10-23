@@ -1,5 +1,6 @@
 "use client";
 
+import { Magnetic } from "@/components/motion/Magnetic";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/cn";
 import { useCart } from "@/stores/cart";
@@ -24,7 +25,8 @@ export function AddToBag({ product, ml, label, className }: AddToBagProps) {
   const available = Boolean(size?.inStock);
 
   return (
-    <button
+    <Magnetic>
+      <button
       type="button"
       data-cursor="order"
       disabled={!available}
@@ -34,11 +36,12 @@ export function AddToBag({ product, ml, label, className }: AddToBagProps) {
         setOpen(true);
       }}
       className={cn(
-        "inline-flex items-center justify-center gap-3 bg-accent px-5 py-3.5 text-label uppercase text-on-accent transition-colors duration-500 hover:bg-accent-600 disabled:cursor-not-allowed disabled:bg-ink-700 disabled:text-ivory-muted",
+        "sheen inline-flex items-center justify-center gap-3 bg-accent px-5 py-3.5 text-label uppercase text-on-accent transition-colors duration-500 hover:bg-accent-600 disabled:cursor-not-allowed disabled:bg-ink-700 disabled:text-ivory-muted",
         className,
       )}
     >
       {available ? (label ?? brand.copy.cart.addToBag) : brand.copy.cart.outOfStock}
-    </button>
+      </button>
+    </Magnetic>
   );
 }

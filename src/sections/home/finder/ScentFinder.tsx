@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, type MouseEvent } from "react";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { SplitHeading } from "@/components/motion/SplitHeading";
 import { FloatingBottle } from "@/components/product/FloatingBottle";
 import { NotesPyramid } from "@/components/product/NotesPyramid";
 import { brand } from "@/config/brand";
@@ -89,9 +91,7 @@ export function ScentFinder() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="text-micro uppercase text-gold-400">{copy.eyebrow}</p>
-            <h2 id={titleId} className="mt-4 font-display text-h2 uppercase">
-              {copy.title}
-            </h2>
+            <SplitHeading id={titleId} text={copy.title} className="mt-4 font-display text-h2 uppercase" />
           </div>
           {started && !finished && (
             <p className="text-label uppercase text-ivory-muted tabular-nums" aria-live="polite">
@@ -120,14 +120,16 @@ export function ScentFinder() {
             {!started && (
               <motion.div key="intro" {...slide}>
                 <p className="max-w-xl font-editorial text-editorial italic text-ivory-muted">{copy.intro}</p>
-                <button
-                  type="button"
-                  onClick={() => setStarted(true)}
-                  className="mt-10 inline-flex items-center gap-3 bg-accent px-6 py-4 text-label uppercase text-on-accent transition-colors hover:bg-accent-600"
-                >
-                  {copy.start}
-                  <span aria-hidden className="size-1.5 rotate-45 bg-on-accent" />
-                </button>
+                <Magnetic className="mt-10">
+                  <button
+                    type="button"
+                    onClick={() => setStarted(true)}
+                    className="sheen inline-flex items-center gap-3 bg-accent px-6 py-4 text-label uppercase text-on-accent transition-colors hover:bg-accent-600"
+                  >
+                    {copy.start}
+                    <span aria-hidden className="size-1.5 rotate-45 bg-on-accent" />
+                  </button>
+                </Magnetic>
               </motion.div>
             )}
 
@@ -177,7 +179,7 @@ export function ScentFinder() {
                     <Link
                       href={productHref(result.product.slug)}
                       data-cursor="view"
-                      className="inline-flex items-center border border-accent-border px-4 py-3 text-label uppercase text-ivory transition-colors hover:bg-accent hover:text-on-accent"
+                      className="sheen inline-flex items-center border border-accent-border px-4 py-3 text-label uppercase text-ivory transition-colors hover:bg-accent hover:text-on-accent"
                     >
                       {`${brand.copy.hero.cta} ${result.product.name}`}
                     </Link>

@@ -212,7 +212,7 @@ export function Chapter({ product, index, total }: ChapterProps) {
                 <Link
                   href={productHref(product.slug)}
                   data-cursor="view"
-                  className="inline-flex items-center gap-3 border border-accent-border px-4 py-3 text-label uppercase text-ivory transition-colors duration-500 hover:border-accent hover:bg-accent hover:text-on-accent"
+                  className="sheen inline-flex items-center gap-3 border border-accent-border px-4 py-3 text-label uppercase text-ivory transition-colors duration-500 hover:border-accent hover:bg-accent hover:text-on-accent"
                 >
                   {brand.copy.hero.cta}
                   <span className="sr-only md:not-sr-only">{` ${product.name}`}</span>

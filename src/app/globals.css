@@ -521,6 +521,59 @@
     stroke-dashoffset: 0;
   }
 
+  /* Gold sheen that sweeps across a button on hover (transform only). */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 35%, color-mix(in oklab, var(--gold-100) 50%, transparent) 50%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 0.9s var(--ease-lux);
+  }
+
+  .sheen:hover::after,
+  .sheen:focus-visible::after {
+    transform: translateX(120%);
+  }
+
+  /* Split-text headings (SplitHeading): hidden only once scripts mark them ready. */
+  .split-word {
+    transition: transform 1s var(--ease-lux) calc(var(--i, 0) * 70ms);
+  }
+
+  [data-split="ready"] .split-word {
+    transform: translateY(110%);
+  }
+
+  /* Header wordmark: an occasional glint clipped to the logo's alpha. */
+  .logo-shimmer {
+    pointer-events: none;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    mix-blend-mode: screen;
+  }
+
+  .logo-shimmer-band {
+    background: linear-gradient(100deg, transparent, color-mix(in oklab, var(--gold-100) 85%, transparent), transparent);
+    translate: -110% 0;
+    animation: logo-shimmer 9s var(--ease-silk) 3s infinite;
+  }
+
+  /* Route transition ink (PageTransition): the active accent with a gold edge. */
+  .page-ink {
+    background:
+      linear-gradient(180deg, var(--gold-400) 0 1px, transparent 1px calc(100% - 1px), var(--gold-400) calc(100% - 1px)),
+      var(--accent-gradient);
+  }
+
   /* Off-screen sections stop their idle loops. */
   [data-paused] :is(.bottle-float, .bokeh, .zed-glint, .scroll-cue-dot, .texture-bolt, .texture-drift, .texture-sway) {
     animation-play-state: paused;
@@ -773,5 +826,15 @@
   }
   to {
     translate: 3% 1%;
+  }
+}
+
+@keyframes logo-shimmer {
+  0% {
+    translate: -110% 0;
+  }
+  14%,
+  100% {
+    translate: 330% 0;
   }
 }
