@@ -145,7 +145,7 @@ Images go through `next/image` (AVIF/WebP), so full-size PNG/JPG sources are fin
 
 - `public/brand/emblems/lotus.svg` and `lion-crowned.svg`: placeholder emblems drawn in the brand style, to replace with the official ones.
 - Bottle cutouts, gallery and props (see above).
-- Prices (all `0`, shown as "Price on request") and notes in `src/data/products.ts`.
+- Notes in `src/data/products.ts` (prices are set; a price of `0` would show "Price on request").
 - `whatsapp`, `socials` and `siteUrl` in `src/config/brand.ts`.
 - `src/lib/newsletter.ts`: connect a provider.
 - `src/data/reviews.ts`: the Reviews section stays hidden until real reviews are added. Never invent testimonials.

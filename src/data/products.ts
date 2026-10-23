@@ -2,7 +2,7 @@ import type { Product } from "@/types/product";
 
 /**
  * The catalogue. Adding a perfume = adding one object here plus its images in
- * public/images/products/<slug>/. Notes and prices are placeholders.
+ * public/images/products/<slug>/. Notes are placeholders.
  */
 export const products: Product[] = [
   {
@@ -14,7 +14,7 @@ export const products: Product[] = [
       "A slow amber glow of saffron and jasmine that settles into amberwood, oud and cedar. Sovereign wears like red velvet after midnight: sweet, warm and impossible to ignore.",
     gender: "unisex",
     concentration: "Eau de Parfum",
-    sizes: [{ ml: 30, price: 0, inStock: true }],
+    sizes: [{ ml: 30, price: 1399, inStock: true }],
     notes: {
       top: ["Saffron"],
       heart: ["Jasmine"],
@@ -58,7 +58,7 @@ export const products: Product[] = [
       "A crack of lime and black pepper over aromatic spice, grounded in woods and worn leather. Dominator is the sharp collar and the steady handshake: fresh, electric and in control.",
     gender: "men",
     concentration: "Eau de Parfum",
-    sizes: [{ ml: 30, price: 0, inStock: true }],
+    sizes: [{ ml: 30, price: 1499, inStock: true }],
     notes: {
       top: ["Lime", "Black Pepper"],
       heart: ["Aromatic Spices"],

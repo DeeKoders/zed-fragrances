@@ -180,4 +180,4 @@ All phases built, linted, built and committed.
 - Product OG images use the default sans font (Cinzel isn't embedded in the image renderer).
 - Scent Finder "match %" is the honest share of matched tags, so mixed answers can show modest numbers.
 - Page transitions intercept internal link clicks globally; browser back/forward isn't animated.
-- Placeholder content: emblems (`lotus.svg`, `lion-crowned.svg`), ingredient props (orbs), bottle crops and gallery (reference posters), prices (0), WhatsApp number, socials, `siteUrl`, newsletter handler.
+- Placeholder content: emblems (`lotus.svg`, `lion-crowned.svg`), ingredient props (orbs), bottle crops and gallery (reference posters), WhatsApp number, socials, `siteUrl`, newsletter handler.

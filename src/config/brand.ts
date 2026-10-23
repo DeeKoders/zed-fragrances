@@ -56,7 +56,7 @@ export const brand: Brand = {
     { label: "Facebook", href: "https://facebook.com/" },
   ],
 
-  whatsapp: "923000000000",
+  whatsapp: "923127373848",
   currency: "PKR",
   locale: "en-PK",
 
