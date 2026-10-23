@@ -11,6 +11,7 @@ import { WebGLLayer } from "@/components/webgl/WebGLLayer";
 import { brand } from "@/config/brand";
 import { introScript } from "@/lib/intro";
 import { getThemeRegistry } from "@/lib/theme/css";
+import { MotionProvider } from "@/providers/MotionProvider";
 import { SmoothScroll } from "@/providers/SmoothScroll";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { fontVariables } from "./fonts";
@@ -40,24 +41,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="font-sans text-body">
         <ThemeProvider themes={themes}>
-          <SmoothScroll>
-            <a
-              href="#main"
-              className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-ink-950 focus:px-4 focus:py-3 focus:text-label focus:uppercase focus:text-gold-200"
-            >
-              Skip to content
-            </a>
-            <AtmosphereFallback />
-            <WebGLLayer />
-            <Header />
-            <main id="main" tabIndex={-1} className="outline-none">
-              {children}
-            </main>
-            <Footer />
-            <Preloader />
-            <GrainOverlay />
-            <Cursor />
-          </SmoothScroll>
+          <MotionProvider>
+            <SmoothScroll>
+              <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-ink-950 focus:px-4 focus:py-3 focus:text-label focus:uppercase focus:text-gold-200"
+              >
+                {brand.copy.skipToContent}
+              </a>
+              <AtmosphereFallback />
+              <WebGLLayer />
+              <Header />
+              <main id="main" tabIndex={-1} className="outline-none">
+                {children}
+              </main>
+              <Footer />
+              <Preloader />
+              <GrainOverlay />
+              <Cursor />
+            </SmoothScroll>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>

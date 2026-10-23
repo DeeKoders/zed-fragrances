@@ -29,8 +29,8 @@ Plan approved. Permission to build ALL remaining phases in one continuous run: 2
 | 2c WebGL background + seam | done |
 | 3a Product worlds: chapters | done |
 | 3b Product worlds: details + textures | done |
-| 4 Finder, collection, marquee, banner, strip, reviews, footer | next |
-| 5 Product page, cart, WhatsApp | pending |
+| 4 Finder, collection, marquee, banner, strip, reviews, footer | done |
+| 5 Product page, cart, WhatsApp | next |
 | 6 Polish, SEO, README | pending |
 
 ### Phase 2a + 2b (committed together)
@@ -98,6 +98,31 @@ Browser checklist:
 - Reduced motion: panel sits below each chapter in normal flow, all filled.
 
 Known issues: "Order Now" links to the product page until the cart lands in Phase 5. Ingredient props are placeholder orbs until real PNGs are added to `props`.
+
+### Phase 4: finder, collection, marquee, banner, strip, reviews, footer (plan)
+- Marquee: infinite strip of gold tracked caps (feature labels from data), seamless loop on the GSAP ticker, speed and direction follow scroll velocity; static for reduced motion.
+- Scent Finder (#finder): 4 steps defined in `src/data/quiz.ts`; `src/lib/scent-finder.ts` scores every product by moodTags, seasons, occasions and mood (new products join automatically); result = full-site theme takeover with an accent burst, match %, bottle, notes and CTAs; focus management + live region.
+- Collection (#collection): responsive grid that scales to many products; hover/focus previews the product's theme, tilts the bottle and reveals notes; compare mode (pick up to 3) shows a side-by-side table.
+- Drop banner: fully driven by `brand.dropBanner` (on/off, eyebrow, text, optional stock meter, optional countdown); first-batch poster as a darkened mood background only.
+- Feature strip: 4 icons from `brand.features` with thin gold dividers; icons line-draw in when scrolled into view. Shared line-icon set for all FeatureIcon keys.
+- Reviews: `src/data/reviews.ts` (empty) → section hidden until filled. No invented testimonials.
+- Footer: newsletter form (UI + placeholder handler in `src/lib/newsletter.ts`), copy moved into `brand.copy`.
+- `src/lib/format.ts` price formatting (0 → "Price on request").
+
+Done: `src/sections/home/{Marquee,DropBanner,FeatureStrip,Reviews}.tsx`, `finder/ScentFinder.tsx`, `collection/{Collection,CollectionCard,CompareTable}.tsx`, `src/data/{quiz,reviews}.ts`, `src/lib/{scent-finder,format,newsletter}.ts`, `src/components/ui/FeatureIcon.tsx`, `src/components/layout/NewsletterForm.tsx`, `src/providers/MotionProvider.tsx`, `src/hooks/useNow.ts`; all interface copy in `brand.copy`; `brand.features`; `dropBanner.image`.
+
+Home order: Hero → Marquee → Worlds → Scent Finder → Collection → Drop Banner → Feature Strip → Reviews (hidden) → Footer.
+
+Browser checklist:
+- Marquee: two rows (gold, outline) drift in opposite directions; scrolling speeds them up and flips direction with the scroll.
+- Scent Finder: Begin → 4 steps with a progress bar, Back works, focus moves to each question; the last choice fires an accent burst from the click point and the whole site morphs to the match; result shows match %, bottle, notes, Discover / Order Now / Start again.
+- Collection: hovering a card switches the site theme, tilts its bottle and slides up the notes; on touch the notes show as a line under the tagline. Compare → tick two → table appears below (scrolls sideways on phones).
+- Drop banner: big gold "First Batch Ready" over the darkened poster; set `stock` / `countdownTo` in brand.ts to see the meter / timer; `enabled: false` hides it.
+- Feature strip: 4 icons draw themselves in, thin gold dividers (2×2 on phones).
+- Reviews section is absent (no reviews yet).
+- Footer: newsletter accepts an email and shows the success message; invalid email shows the error.
+
+Known issues: newsletter handler is a placeholder (no provider). Marquee labels come from product + brand feature labels.
 
 ## Needs review
 - WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings.

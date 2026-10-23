@@ -66,12 +66,22 @@ export const brand: Brand = {
     text: "Limited Stock. Grab yours before it ends.",
     stock: null,
     countdownTo: null,
+    // Mood only: its labels contain text errors, so never use it for bottle close-ups.
+    image: { src: "/images/reference/first-batch-poster.png", width: 1024, height: 1536 },
   },
 
   disclaimer:
     "ZED Fragrances is not affiliated with or endorsed by the brands referenced. Names are used for comparison only; all trademarks belong to their respective owners.",
 
+  features: [
+    { icon: "lotus", label: "Luxury Scent" },
+    { icon: "clock", label: "Long Lasting" },
+    { icon: "diamond", label: "Premium Quality" },
+    { icon: "leaves", label: "Rich & Captivating" },
+  ],
+
   copy: {
+    skipToContent: "Skip to content",
     inspiredBy: "Inspired by",
     hero: {
       cta: "Discover",
@@ -84,6 +94,52 @@ export const brand: Brand = {
       order: "Order Now",
       notes: { title: "Notes", top: "Top", heart: "Heart", base: "Base" },
       vibe: { longevity: "Longevity", projection: "Projection", seasons: "Seasons", occasions: "Occasions" },
+    },
+    priceOnRequest: "Price on request",
+    finder: {
+      eyebrow: "Scent Finder",
+      title: "Find your world",
+      intro: "Four quick choices. We'll match you to the scent that feels like you.",
+      start: "Begin",
+      step: "Step",
+      of: "of",
+      back: "Back",
+      restart: "Start again",
+      resultEyebrow: "Your signature",
+      match: "match",
+    },
+    collection: {
+      eyebrow: "The Collection",
+      title: "Every world, side by side",
+      compare: "Compare",
+      compareDone: "Done comparing",
+      compareHint: "Pick up to three fragrances to compare.",
+      select: "Add to compare",
+      clear: "Clear",
+      inspiredBy: "Inspired by",
+      concentration: "Concentration",
+      sizes: "Sizes",
+    },
+    drop: {
+      cta: "Shop the first batch",
+      stock: "left",
+      endsIn: "Ends in",
+      units: { days: "Days", hours: "Hrs", minutes: "Min", seconds: "Sec" },
+    },
+    reviews: { eyebrow: "Reviews", title: "Worn and loved" },
+    footer: {
+      fragrances: "Fragrances",
+      connect: "Connect",
+      whatsapp: "WhatsApp",
+      newsletter: {
+        title: "The inner circle",
+        text: "New drops and restocks, first.",
+        label: "Email address",
+        placeholder: "you@example.com",
+        submit: "Join",
+        success: "You're on the list.",
+        error: "Something went wrong. Please try again.",
+      },
     },
     cursor: { view: "View", order: "Order" },
   },

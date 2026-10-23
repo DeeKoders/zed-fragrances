@@ -3,12 +3,15 @@ import { DiamondDivider } from "@/components/ui/DiamondDivider";
 import { Logo } from "@/components/ui/Logo";
 import { brand } from "@/config/brand";
 import { products } from "@/data/products";
+import { productHref } from "@/lib/routes";
 import { whatsappUrl } from "@/lib/whatsapp";
 import { CurrentYear } from "./CurrentYear";
+import { NewsletterForm } from "./NewsletterForm";
 
 const externalLinkClass = "text-body text-ivory transition-colors hover:text-gold-200";
 
 export function Footer() {
+  const copy = brand.copy.footer;
   return (
     <footer className="border-t border-line bg-ink-950/60">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 md:grid-cols-12 md:px-10 md:py-24">
@@ -17,16 +20,21 @@ export function Footer() {
           <p className="mt-6 max-w-xs font-editorial text-editorial italic text-ivory-muted">
             {brand.taglines.primary}
           </p>
+          <h2 className="mt-10 text-label uppercase text-gold-400">{copy.newsletter.title}</h2>
+          <p className="mt-2 text-sm text-ivory-muted">{copy.newsletter.text}</p>
+          <div className="max-w-sm">
+            <NewsletterForm />
+          </div>
         </div>
 
         <nav aria-labelledby="footer-fragrances" className="md:col-span-3">
           <h2 id="footer-fragrances" className="text-label uppercase text-gold-400">
-            Fragrances
+            {copy.fragrances}
           </h2>
           <ul className="mt-6 space-y-5">
             {products.map((product) => (
               <li key={product.slug}>
-                <Link href={`/fragrances/${product.slug}`} className="group block">
+                <Link href={productHref(product.slug)} className="group block">
                   <span className="font-display text-xl uppercase tracking-[0.12em] text-ivory transition-colors group-hover:text-gold-200">
                     {product.name}
                   </span>
@@ -38,11 +46,11 @@ export function Footer() {
         </nav>
 
         <div className="md:col-span-4">
-          <h2 className="text-label uppercase text-gold-400">Connect</h2>
+          <h2 className="text-label uppercase text-gold-400">{copy.connect}</h2>
           <ul className="mt-6 space-y-3">
             <li>
               <a href={whatsappUrl()} target="_blank" rel="noopener noreferrer" className={externalLinkClass}>
-                WhatsApp <span className="text-ivory-muted">+{brand.whatsapp}</span>
+                {copy.whatsapp} <span className="text-ivory-muted">+{brand.whatsapp}</span>
               </a>
             </li>
             {brand.socials.map((social) => (

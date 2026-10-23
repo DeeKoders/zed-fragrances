@@ -1,4 +1,4 @@
-import type { ThemeSpec } from "./product";
+import type { FeatureIcon, ThemeSpec } from "./product";
 
 export type ImageAsset = { src: string; width: number; height: number };
 
@@ -46,10 +46,15 @@ export type Brand = {
     stock: { remaining: number; total: number } | null;
     /** Optional countdown target, ISO 8601. */
     countdownTo: string | null;
+    /** Mood image behind the banner (darkened), optional. */
+    image: ImageAsset | null;
   };
   disclaimer: string;
+  /** The brand-wide feature strip (4 items). Icons: see FeatureIcon in types/product.ts. */
+  features: { icon: FeatureIcon; label: string }[];
   /** Interface copy, so components never hardcode words. */
   copy: {
+    skipToContent: string;
     /** Prefix for a product's reference fragrance: "Inspired by Baccarat Rouge 540". */
     inspiredBy: string;
     hero: {
@@ -66,6 +71,48 @@ export type Brand = {
       order: string;
       notes: { title: string; top: string; heart: string; base: string };
       vibe: { longevity: string; projection: string; seasons: string; occasions: string };
+    };
+    /** Shown instead of a price while it is 0. */
+    priceOnRequest: string;
+    finder: {
+      eyebrow: string;
+      title: string;
+      intro: string;
+      start: string;
+      step: string;
+      of: string;
+      back: string;
+      restart: string;
+      resultEyebrow: string;
+      match: string;
+    };
+    collection: {
+      eyebrow: string;
+      title: string;
+      compare: string;
+      compareDone: string;
+      compareHint: string;
+      select: string;
+      clear: string;
+      inspiredBy: string;
+      concentration: string;
+      sizes: string;
+    };
+    drop: { cta: string; stock: string; endsIn: string; units: { days: string; hours: string; minutes: string; seconds: string } };
+    reviews: { eyebrow: string; title: string };
+    footer: {
+      fragrances: string;
+      connect: string;
+      whatsapp: string;
+      newsletter: {
+        title: string;
+        text: string;
+        label: string;
+        placeholder: string;
+        submit: string;
+        success: string;
+        error: string;
+      };
     };
     /** Labels the custom cursor shows over [data-cursor] elements. */
     cursor: { view: string; order: string };
