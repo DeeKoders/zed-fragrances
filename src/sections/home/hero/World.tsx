@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Texture } from "@/components/textures/Texture";
 import { brand } from "@/config/brand";
 import { cn } from "@/lib/cn";
 import { productHref } from "@/lib/routes";
@@ -29,8 +30,8 @@ const BOKEH = [
 type WorldBackdropProps = { product: Product; side: Side; className?: string };
 
 /**
- * A product's world behind the hero: accent gradient and glow, drifting bokeh (gold when warm,
- * icy when cold) and its emblem as a watermark. Themed locally, so it shows its own accent whatever
+ * A product's world: accent gradient and glow, its procedural texture, drifting bokeh (gold when
+ * warm, icy when cold) and its emblem as a watermark. Themed locally, so it shows its own accent whatever
  * the site theme is. [data-world-glow] and [data-world-dim] are driven by the hero.
  */
 export function WorldBackdrop({ product, side, className }: WorldBackdropProps) {
@@ -45,6 +46,7 @@ export function WorldBackdrop({ product, side, className }: WorldBackdropProps) 
       className={cn("world absolute inset-0 overflow-hidden bg-ink-950", className)}
     >
       <div className="world-base absolute inset-0" />
+      <Texture kind={product.theme.texture} seed={product.slug} />
       <div data-world-glow className="world-glow absolute inset-0" />
       <div className={halfBox(side)}>
         <Image

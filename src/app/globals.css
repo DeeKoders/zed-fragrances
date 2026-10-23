@@ -432,8 +432,63 @@
     animation: hero-swap 900ms var(--ease-lux) both;
   }
 
+  /* Procedural textures (src/components/textures). Strokes and stops read the theme in scope. */
+  .texture {
+    opacity: 0.55;
+  }
+
+  .texture-glow {
+    stroke: var(--accent);
+    stroke-opacity: 0.16;
+  }
+
+  .texture-line {
+    stroke: var(--accent-glow);
+    stroke-opacity: 0.55;
+  }
+
+  .texture-faint {
+    stroke-opacity: 0.3;
+  }
+
+  .texture-core {
+    stroke: var(--ivory);
+    stroke-opacity: 0.85;
+  }
+
+  .texture-stop-accent {
+    stop-color: var(--accent);
+  }
+
+  .texture-stop-alt {
+    stop-color: var(--accent-alt);
+  }
+
+  .texture-bolt {
+    opacity: 0.2;
+    animation: bolt-flicker 7s steps(1) infinite;
+  }
+
+  .texture-drift {
+    animation: texture-drift 24s ease-in-out infinite alternate;
+  }
+
+  .texture-sway {
+    animation: texture-sway 18s ease-in-out infinite alternate;
+  }
+
+  /* Placeholder ingredient prop: a glassy orb in the product's colours. */
+  .prop-orb {
+    background:
+      radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--ivory) 55%, transparent), transparent 22%),
+      radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--accent-glow) 55%, transparent), color-mix(in oklab, var(--accent-alt) 60%, transparent) 70%);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklab, var(--gold-400) 45%, transparent),
+      0 0 2.5rem color-mix(in oklab, var(--accent) 35%, transparent);
+  }
+
   /* Off-screen sections stop their idle loops. */
-  [data-paused] :is(.bottle-float, .bokeh, .zed-glint, .scroll-cue-dot) {
+  [data-paused] :is(.bottle-float, .bokeh, .zed-glint, .scroll-cue-dot, .texture-bolt, .texture-drift, .texture-sway) {
     animation-play-state: paused;
   }
 
@@ -644,5 +699,45 @@
   to {
     transform: none;
     opacity: 1;
+  }
+}
+
+@keyframes bolt-flicker {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  3% {
+    opacity: 1;
+  }
+  4% {
+    opacity: 0.35;
+  }
+  5% {
+    opacity: 0.9;
+  }
+  8% {
+    opacity: 0.2;
+  }
+  52% {
+    opacity: 0.6;
+  }
+  53% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes texture-drift {
+  to {
+    translate: 4% -3%;
+  }
+}
+
+@keyframes texture-sway {
+  from {
+    translate: -3% 0;
+  }
+  to {
+    translate: 3% 1%;
   }
 }

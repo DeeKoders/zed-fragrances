@@ -28,8 +28,8 @@ Plan approved. Permission to build ALL remaining phases in one continuous run: 2
 | 2b Split-world hero + cursor | done |
 | 2c WebGL background + seam | done |
 | 3a Product worlds: chapters | done |
-| 3b Product worlds: details + textures | next |
-| 4 Finder, collection, marquee, banner, strip, reviews, footer | pending |
+| 3b Product worlds: details + textures | done |
+| 4 Finder, collection, marquee, banner, strip, reviews, footer | next |
 | 5 Product page, cart, WhatsApp | pending |
 | 6 Polish, SEO, README | pending |
 
@@ -79,6 +79,25 @@ Browser checklist:
 - Header nav "Fragrances" jumps to the chapters.
 
 Known issues: none.
+
+### Phase 3b: product worlds, details + textures (plan)
+- Procedural textures (`src/lib/texture.ts` + `src/components/textures/Texture.tsx`): marble veins (smoothed random walks with branches), lightning (midpoint-displacement bolts with flicker), smoke (drifting soft blobs), silk (flowing ribbons). Seeded by slug, arithmetic only (no trig), so server and client render identical SVG; vector strokes, no SVG filters; coloured by theme variables.
+- Every WorldBackdrop gets its product's texture, so hero, chapters and later the product page share one world.
+- Ingredient parallax: `product.props` images in three depth layers, or stylised note "orbs" (placeholders) when props are empty; scrubbed at different speeds.
+- Reusable `NotesPyramid` (top → heart → base) and `VibeMeters` (longevity/projection 5-segment meters, seasons, occasions) in `src/components/product/`.
+- Chapter panel with pyramid, meters and CTAs ("Discover X" / "Order Now"); desktop shows it beside the story, phones/tablets swap story → panel while the bottle lifts.
+- Timeline: tiers reveal in order, meters fill, CTAs appear last; reduced motion shows the panel in normal flow below the chapter.
+
+Done: `src/lib/texture.ts`, `src/components/textures/Texture.tsx`, `src/components/product/{IngredientLayers,NotesPyramid,VibeMeters}.tsx`, `src/sections/home/worlds/ChapterOrder.tsx`; textures added to every WorldBackdrop (hero + chapters).
+
+Browser checklist:
+- Sovereign's world (hero left/top and its chapter) shows thin crimson marble veins; Dominator's shows blue lightning bolts that flicker now and then.
+- In a chapter, note orbs (Saffron, Jasmine, …) drift at three depths as you scroll.
+- Desktop (≥1024): story bottom-left, panel bottom-right; tiers appear top → heart → base, meter segments fill, then "Discover Sovereign" and "Order Now".
+- Phones/tablets: the story fades, the bottle lifts and shrinks into the top area, the panel rises from the bottom; nothing overlaps at 390×844 and 768×1024.
+- Reduced motion: panel sits below each chapter in normal flow, all filled.
+
+Known issues: "Order Now" links to the product page until the cart lands in Phase 5. Ingredient props are placeholder orbs until real PNGs are added to `props`.
 
 ## Needs review
 - WebGL shaders (`Atmosphere.tsx`, `SeamCanvas.tsx`) are untested in a browser; check the console for `[webgl]` warnings.
