@@ -3,30 +3,34 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 export type CartItem = { slug: string; ml: number; quantity: number };
 
-const MAX_QUANTITY = 20;
+export const MAX_QUANTITY = 20;
 
 type CartState = {
   items: CartItem[];
   open: boolean;
+  checkoutOpen: boolean;
   add: (slug: string, ml: number, quantity?: number) => void;
   setQuantity: (slug: string, ml: number, quantity: number) => void;
   remove: (slug: string, ml: number) => void;
   clear: () => void;
   setOpen: (open: boolean) => void;
+  /** Opening checkout closes the drawer. */
+  setCheckoutOpen: (open: boolean) => void;
 };
 
 const same = (item: CartItem, slug: string, ml: number) => item.slug === slug && item.ml === ml;
 const clamp = (quantity: number) => Math.min(MAX_QUANTITY, Math.max(1, Math.round(quantity)));
 
 /**
- * The bag. Items persist to localStorage; the drawer's open state doesn't. Hydration is skipped at
- * creation and done after mount (CartRehydrate) so the server markup always matches the first render.
+ * The bag. Items persist to localStorage; the drawer and checkout open states don't. Hydration is
+ * skipped at creation and done after mount (CartRehydrate) so the server markup always matches the first render.
  */
 export const useCart = create<CartState>()(
   persist(
     (set) => ({
       items: [],
       open: false,
+      checkoutOpen: false,
       add: (slug, ml, quantity = 1) =>
         set((state) => {
           const existing = state.items.find((item) => same(item, slug, ml));
@@ -42,6 +46,7 @@ export const useCart = create<CartState>()(
       remove: (slug, ml) => set((state) => ({ items: state.items.filter((item) => !same(item, slug, ml)) })),
       clear: () => set({ items: [] }),
       setOpen: (open) => set({ open }),
+      setCheckoutOpen: (checkoutOpen) => set(checkoutOpen ? { checkoutOpen, open: false } : { checkoutOpen }),
     }),
     {
       name: "zed-cart",

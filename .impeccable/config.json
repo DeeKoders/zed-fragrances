@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/app/globals.css"
+        ],
+        "createdAt": "2026-10-28T11:18:19.646Z",
+        "reason": "Brief (PROMPT.md) specifies accent-filled product names and gold-metal type; pre-existing brand utilities, not part of the checkout change"
+      }
+    ]
+  }
+}

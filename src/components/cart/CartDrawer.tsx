@@ -6,7 +6,7 @@ import { useCallback, useEffect, useId, useMemo, useRef } from "react";
 import { Bottle } from "@/components/product/Bottle";
 import { brand } from "@/config/brand";
 import { useDialog } from "@/hooks/useDialog";
-import { buildOrder, checkout } from "@/lib/checkout";
+import { buildOrder, orderTotals } from "@/lib/checkout";
 import { formatPrice } from "@/lib/format";
 import { ease } from "@/lib/motion";
 import { productHref } from "@/lib/routes";
@@ -17,16 +17,19 @@ const copy = brand.copy.cart;
 const stepperClass =
   "grid size-9 place-items-center text-ivory transition-colors hover:text-gold-200 disabled:opacity-30";
 
-/** The bag: slide-in drawer with quantities, subtotal and "Order on WhatsApp". */
+/** The bag: slide-in drawer with quantities, totals (delivery included) and the way into checkout. */
 export function CartDrawer() {
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
   const open = useCart((state) => state.open);
   const items = useCart((state) => state.items);
   const setOpen = useCart((state) => state.setOpen);
+  const setCheckoutOpen = useCart((state) => state.setCheckoutOpen);
   const setQuantity = useCart((state) => state.setQuantity);
   const remove = useCart((state) => state.remove);
   const order = useMemo(() => buildOrder(items), [items]);
+  // Before a payment method is chosen; COD charges are added in checkout.
+  const totals = orderTotals(order, "wallet");
   const close = useCallback(() => setOpen(false), [setOpen]);
 
   // Restore the persisted bag after mount, so the server render always matches.
@@ -143,21 +146,30 @@ export function CartDrawer() {
                   ))}
                 </ul>
                 <div className="border-t border-line px-6 py-6">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-label uppercase text-ivory-muted">{copy.subtotal}</span>
-                    <span className="font-display text-h3 text-gold-200">{formatPrice(order.total)}</span>
+                  <dl className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <dt className="text-ivory-muted">{copy.subtotal}</dt>
+                      <dd className="tabular-nums text-ivory">{formatPrice(order.total)}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-ivory-muted">{copy.delivery}</dt>
+                      <dd className="tabular-nums text-ivory">{formatPrice(totals.delivery)}</dd>
+                    </div>
+                  </dl>
+                  <div className="mt-4 flex items-baseline justify-between border-t border-line pt-4">
+                    <span className="text-label uppercase text-ivory-muted">{copy.total}</span>
+                    <span className="font-display text-h3 tabular-nums text-gold-200">{formatPrice(totals.total)}</span>
                   </div>
                   {order.hasPriceOnRequest && <p className="mt-2 text-sm text-ivory-muted">{copy.onRequestNote}</p>}
                   <button
                     type="button"
                     data-cursor="order"
-                    onClick={() => checkout(order)}
+                    aria-haspopup="dialog"
+                    onClick={() => setCheckoutOpen(true)}
                     className="sheen mt-6 flex w-full items-center justify-center gap-3 bg-gold-300 px-6 py-4 text-label uppercase text-ink-950 transition-colors hover:bg-gold-200"
                   >
-                    <svg aria-hidden viewBox="0 0 24 24" className="size-4" fill="currentColor">
-                      <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.5.5 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.9-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3Z" />
-                    </svg>
                     {copy.checkout}
+                    <span aria-hidden>→</span>
                   </button>
                 </div>
               </>

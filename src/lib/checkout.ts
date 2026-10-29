@@ -3,7 +3,6 @@ import { getProduct } from "@/data/products";
 import type { CartItem } from "@/stores/cart";
 import type { Product } from "@/types/product";
 import { formatPrice } from "./format";
-import { whatsappUrl } from "./whatsapp";
 
 export type OrderLine = {
   product: Product;
@@ -46,34 +45,96 @@ export function buildOrder(items: CartItem[]): Order {
   };
 }
 
-/** The prefilled WhatsApp message: items, sizes, quantities and the total in the configured currency. */
-export function orderMessage(order: Order) {
-  const copy = brand.copy.whatsapp;
-  const lines = order.lines.map((line) => {
-    const price = line.unitPrice > 0 ? formatPrice(line.lineTotal) : copy.onRequest;
-    return `• ${line.product.name} ${line.ml}ml × ${line.quantity}: ${price}`;
-  });
-  const total = `${copy.total}: ${formatPrice(order.total)}${order.hasPriceOnRequest ? ` (+ ${copy.onRequest})` : ""}`;
-  return [copy.greeting, "", ...lines, "", total, "", copy.footer].join("\n");
+/**
+ * How the customer pays: "wallet" is EasyPaisa / JazzCash with a payment screenshot, "cod" is cash on
+ * delivery. To plug in a gateway later, add a method here, its copy in brand.copy.checkout and its
+ * option in CheckoutDialog.
+ */
+export type PaymentMethod = "wallet" | "cod";
+
+export const paymentMethods: PaymentMethod[] = ["wallet", "cod"];
+
+export type Customer = { name: string; phone: string; city: string; address: string; notes: string };
+
+/** A payment screenshot, base64-encoded for the JSON request. */
+export type Screenshot = { name: string; type: string; data: string };
+
+/** What the browser sends to /api/orders. The server re-prices the items from the catalogue. */
+export type OrderRequest = {
+  items: CartItem[];
+  customer: Customer;
+  payment: PaymentMethod;
+  screenshot: Screenshot | null;
+};
+
+export type OrderTotals = { subtotal: number; delivery: number; codFee: number; total: number };
+
+/** Items plus delivery, plus the COD charge when paying cash on delivery. */
+export function orderTotals(order: Order, payment: PaymentMethod): OrderTotals {
+  const { deliveryFee, codFee } = brand.checkout;
+  const cod = payment === "cod" ? codFee : 0;
+  return { subtotal: order.total, delivery: deliveryFee, codFee: cod, total: order.total + deliveryFee + cod };
 }
 
-/**
- * Checkout behind one interface so a payment gateway can be added later: implement a provider and
- * pass it to `checkout` (or make it the default). WhatsApp is the only provider for now.
- */
-export type CheckoutProvider = {
-  id: string;
-  checkout: (order: Order) => void | Promise<void>;
-};
+/** Extra charge shown on a payment option. */
+export function paymentFee(payment: PaymentMethod) {
+  return payment === "cod" ? brand.checkout.codFee : 0;
+}
 
-export const whatsappCheckout: CheckoutProvider = {
-  id: "whatsapp",
-  checkout: (order) => {
-    window.open(whatsappUrl(orderMessage(order)), "_blank", "noopener,noreferrer");
-  },
-};
+export function paymentLabel(payment: PaymentMethod) {
+  return brand.copy.checkout[payment].label;
+}
 
-export function checkout(order: Order, provider: CheckoutProvider = whatsappCheckout) {
-  if (order.lines.length === 0) return;
-  return provider.checkout(order);
+/** One line per item: "• Sovereign 30ml × 2: Rs 2,798". */
+export function itemLines(order: Order) {
+  return order.lines.map((line) => {
+    const price = line.unitPrice > 0 ? formatPrice(line.lineTotal) : brand.copy.whatsapp.onRequest;
+    return `• ${line.product.name} ${line.ml}ml × ${line.quantity}: ${price}`;
+  });
+}
+
+/** Pakistani mobile numbers in any common form: 0300 1234567, +92 300 1234567, 0092-300-1234567, … */
+export const PHONE_PATTERN = String.raw`[\s\-]*(\+|00)?(92)?[\s\-]*0?3([\s\-]*[0-9]){9}[\s\-]*`;
+
+/** "0300-1234567" for anything PHONE_PATTERN accepts, otherwise null. */
+export function normalizePhone(phone: string) {
+  const digits = phone.replace(/\D/g, "").replace(/^(?:00)?(?:92)?0?/, "");
+  return /^3\d{9}$/.test(digits) ? `0${digits.slice(0, 3)}-${digits.slice(3)}` : null;
+}
+
+/** Fallback when an order can't be placed: the same order as a prefilled WhatsApp message. */
+export function orderMessage(order: Order, payment: PaymentMethod, customer: Customer) {
+  const copy = brand.copy;
+  const totals = orderTotals(order, payment);
+  const onRequest = order.hasPriceOnRequest ? ` (+ ${copy.whatsapp.onRequest})` : "";
+  return [
+    copy.whatsapp.greeting,
+    "",
+    ...itemLines(order),
+    "",
+    `${copy.cart.subtotal}: ${formatPrice(totals.subtotal)}`,
+    `${copy.cart.delivery}: ${formatPrice(totals.delivery)}`,
+    ...(totals.codFee > 0 ? [`${copy.checkout.codFee}: ${formatPrice(totals.codFee)}`] : []),
+    `${copy.cart.total}: ${formatPrice(totals.total)}${onRequest}`,
+    `${copy.checkout.payment}: ${paymentLabel(payment)}`,
+    "",
+    `${copy.checkout.name}: ${customer.name}`,
+    `${copy.checkout.phone}: ${customer.phone}`,
+    `${copy.checkout.city}: ${customer.city}`,
+    `${copy.checkout.address}: ${customer.address}`,
+    ...(customer.notes ? ["", customer.notes] : []),
+  ].join("\n");
+}
+
+/** Sends the order to /api/orders, which records it in the orders sheet, and returns the order ID. */
+export async function placeOrder(request: OrderRequest): Promise<string> {
+  const response = await fetch("/api/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(request),
+  });
+  const result: unknown = await response.json().catch(() => null);
+  const id = typeof result === "object" && result !== null && "id" in result ? result.id : null;
+  if (!response.ok || typeof id !== "string") throw new Error(`Order failed (${response.status})`);
+  return id;
 }

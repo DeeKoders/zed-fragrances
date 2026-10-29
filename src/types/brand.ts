@@ -40,6 +40,15 @@ export type Brand = {
   whatsapp: string;
   currency: string;
   locale: string;
+  /** Checkout fees and payment details. Amounts are in `currency`. */
+  checkout: {
+    /** Added to every order. */
+    deliveryFee: number;
+    /** Added on top when the customer pays cash on delivery. */
+    codFee: number;
+    /** Mobile wallet the customer pays into before uploading a screenshot. */
+    wallet: { providers: string[]; accountNumber: string; accountTitle: string };
+  };
   dropBanner: {
     enabled: boolean;
     eyebrow: string;
@@ -129,10 +138,66 @@ export type Brand = {
       decrease: string;
       quantity: string;
       subtotal: string;
+      delivery: string;
+      total: string;
       onRequestNote: string;
       checkout: string;
+      /** Product page: puts that size in the bag and opens checkout. */
+      buyNow: string;
       addToBag: string;
       outOfStock: string;
+    };
+    checkout: {
+      title: string;
+      close: string;
+      back: string;
+      details: string;
+      name: string;
+      phone: string;
+      /** Shown under the phone field and in the browser's format warning. */
+      phoneHint: string;
+      city: string;
+      address: string;
+      notes: string;
+      payment: string;
+      wallet: { label: string; hint: string };
+      cod: { label: string; hint: string };
+      /** Shown instead of the wallet option while a price is on request. */
+      walletUnavailable: string;
+      summary: string;
+      codFee: string;
+      continue: string;
+      placeOrder: string;
+      placing: string;
+      pay: {
+        title: string;
+        intro: string;
+        accountNumber: string;
+        accountTitle: string;
+        amount: string;
+        copy: string;
+        copied: string;
+      };
+      screenshot: {
+        label: string;
+        hint: string;
+        choose: string;
+        replace: string;
+        remove: string;
+        preview: string;
+        required: string;
+        invalid: string;
+      };
+      error: string;
+      errorWhatsapp: string;
+      done: {
+        title: string;
+        order: string;
+        wallet: string;
+        cod: string;
+        cta: string;
+        help: string;
+      };
     };
     product: {
       size: string;
@@ -145,12 +210,11 @@ export type Brand = {
       pairs: string;
       details: string;
     };
-    /** Prefilled WhatsApp order message. */
+    /** Prefilled WhatsApp messages: the order fallback when checkout fails, and order questions. */
     whatsapp: {
       greeting: string;
-      total: string;
       onRequest: string;
-      footer: string;
+      question: string;
     };
     /** Labels the custom cursor shows over [data-cursor] elements. */
     cursor: { view: string; order: string };

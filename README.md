@@ -16,10 +16,12 @@ npm run build   # also validates every theme colour and its contrast
 | What | File |
 |---|---|
 | Products (the catalogue) | `src/data/products.ts` |
-| Brand settings, copy, taglines, drop banner, WhatsApp, currency | `src/config/brand.ts` |
+| Brand settings, copy, taglines, drop banner, WhatsApp, currency, delivery and COD fees, wallet account | `src/config/brand.ts` |
 | Scent Finder questions | `src/data/quiz.ts` |
 | Customer reviews | `src/data/reviews.ts` |
-| Checkout (WhatsApp now, gateway later) | `src/lib/checkout.ts` |
+| Checkout (totals, payment methods, placing an order) | `src/lib/checkout.ts`, `src/components/cart/CheckoutDialog.tsx` |
+| Order capture (server) | `src/app/api/orders/route.ts` |
+| Orders sheet script and setup guide | `google-apps-script/` |
 | Newsletter handler (placeholder) | `src/lib/newsletter.ts` |
 | Logo and emblems | `public/brand/` |
 | Product images | `public/images/products/<slug>/` |
@@ -122,14 +124,24 @@ dropBanner: {
 },
 ```
 
-## WhatsApp number and currency
+## Checkout and orders
+
+**Checkout** in the bag (or **Buy now** on a product page) opens a checkout popup. The customer enters their delivery details and picks one of two payment methods:
+
+- **EasyPaisa / JazzCash**: the next step shows the account number, account title and amount to send, with a field for the payment screenshot. After ordering, the customer is told to wait for confirmation (about 1 working day).
+- **Cash on Delivery**: adds the COD charge and places the order straight away.
+
+Every order includes the delivery fee. Orders go to `/api/orders`, which re-prices the bag from the catalogue and records the order in a Google Sheet through Apps Script. Screenshots are saved to Google Drive. **Setup guide: [`google-apps-script/README.md`](google-apps-script/README.md).** It needs two environment variables, `ORDERS_SCRIPT_URL` and `ORDERS_SCRIPT_SECRET` (see `.env.example`).
 
 In `src/config/brand.ts`:
 
-- `whatsapp`: international format without "+", e.g. `"923001234567"`.
+- `checkout.deliveryFee`, `checkout.codFee`: in `currency`.
+- `checkout.wallet`: the providers shown, account number and account title.
+- `whatsapp`: international format without "+", e.g. `"923001234567"`. Used for the footer link, order questions, and as a fallback if an order can't be placed.
 - `currency`: ISO code, e.g. `"PKR"`. `locale` controls number formatting (default `"en-PK"`).
+- `copy.checkout`: all checkout text, including the confirmation messages.
 
-"Order on WhatsApp" opens `https://wa.me/<number>?text=…` with the items, sizes, quantities and total. The message wording is in `brand.copy.whatsapp`. To add a payment gateway later, implement a `CheckoutProvider` in `src/lib/checkout.ts` and pass it to `checkout()`.
+To add another payment method later (e.g. a card gateway), add it to `PaymentMethod` in `src/lib/checkout.ts`, give it copy in `brand.copy.checkout`, and handle it in `CheckoutDialog` and the orders route.
 
 ## Real images
 
@@ -147,6 +159,7 @@ Images go through `next/image` (AVIF/WebP), so full-size PNG/JPG sources are fin
 - Bottle cutouts, gallery and props (see above).
 - Notes in `src/data/products.ts` (prices are set; a price of `0` would show "Price on request").
 - `whatsapp`, `socials` and `siteUrl` in `src/config/brand.ts`.
+- `ORDERS_SCRIPT_URL` and `ORDERS_SCRIPT_SECRET`: orders can't be placed until they're set (see `google-apps-script/README.md`).
 - `src/lib/newsletter.ts`: connect a provider.
 - `src/data/reviews.ts`: the Reviews section stays hidden until real reviews are added. Never invent testimonials.
 
@@ -158,7 +171,8 @@ Every animation respects `prefers-reduced-motion`: no preloader, pinning, WebGL,
 
 1. Push the repository to GitHub (or GitLab/Bitbucket).
 2. On [vercel.com](https://vercel.com), choose **Add New → Project** and import the repository. Vercel detects Next.js; keep the defaults (build `npm run build`).
-3. Deploy.
-4. Add your domain under **Settings → Domains**, then set `siteUrl` in `src/config/brand.ts` to it (used for canonical URLs, the sitemap, robots.txt and share images) and redeploy.
+3. Under **Environment Variables**, add `ORDERS_SCRIPT_URL` and `ORDERS_SCRIPT_SECRET` (on Netlify: **Site configuration → Environment variables**).
+4. Deploy.
+5. Add your domain under **Settings → Domains**, then set `siteUrl` in `src/config/brand.ts` to it (used for canonical URLs, the sitemap, robots.txt and share images) and redeploy.
 
 Every push to the main branch redeploys; other branches get preview URLs.

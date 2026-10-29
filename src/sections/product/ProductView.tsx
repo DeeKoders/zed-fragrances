@@ -13,13 +13,13 @@ import { brand } from "@/config/brand";
 import { useAtmosphereCover } from "@/hooks/useAtmosphereCover";
 import { usePointer } from "@/hooks/usePointer";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { buildOrder, checkout } from "@/lib/checkout";
 import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/format";
 import { ease } from "@/lib/motion";
 import { HOUSE_THEME } from "@/lib/theme/types";
 import { useTheme } from "@/providers/ThemeProvider";
 import { CollectionCard } from "@/sections/home/collection/CollectionCard";
+import { useCart } from "@/stores/cart";
 import { WorldBackdrop } from "@/sections/home/hero/World";
 import type { Product } from "@/types/product";
 import { ProductGallery } from "./ProductGallery";
@@ -62,7 +62,12 @@ export function ProductView({ product, pairs }: { product: Product; pairs: Produ
     return () => observer.disconnect();
   }, []);
 
-  const buyNow = () => checkout(buildOrder([{ slug: product.slug, ml, quantity: 1 }]));
+  // Checkout works on the bag: put this size in it (unless it's there already), then open checkout.
+  const buyNow = () => {
+    const { items, add, setCheckoutOpen } = useCart.getState();
+    if (!items.some((item) => item.slug === product.slug && item.ml === ml)) add(product.slug, ml);
+    setCheckoutOpen(true);
+  };
 
   return (
     <article data-theme={product.slug}>
@@ -106,11 +111,12 @@ export function ProductView({ product, pairs }: { product: Product; pairs: Produ
                 <button
                   type="button"
                   data-cursor="order"
+                  aria-haspopup="dialog"
                   disabled={!size?.inStock}
                   onClick={buyNow}
                   className="sheen inline-flex items-center gap-3 border border-gold-600 px-5 py-3.5 text-label uppercase text-gold-200 transition-colors hover:border-gold-300 hover:text-gold-100 disabled:opacity-40"
                 >
-                  {copy.cart.checkout}
+                  {copy.cart.buyNow}
                 </button>
               </div>
             </motion.div>
