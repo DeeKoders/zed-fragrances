@@ -9,6 +9,7 @@ import { GrainOverlay } from "@/components/layout/GrainOverlay";
 import { Header } from "@/components/layout/Header";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { Preloader } from "@/components/layout/Preloader";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { AtmosphereFallback } from "@/components/webgl/Fallback";
 import { WebGLLayer } from "@/components/webgl/WebGLLayer";
 import { brand } from "@/config/brand";
@@ -57,25 +58,29 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider themes={themes}>
           <MotionProvider>
             <SmoothScroll>
-              <a
-                href="#main"
-                className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-ink-950 focus:px-4 focus:py-3 focus:text-label focus:uppercase focus:text-gold-200"
-              >
-                {brand.copy.skipToContent}
-              </a>
-              <AtmosphereFallback />
-              <WebGLLayer />
-              <Header />
+              <SiteChrome>
+                <a
+                  href="#main"
+                  className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:bg-ink-950 focus:px-4 focus:py-3 focus:text-label focus:uppercase focus:text-gold-200"
+                >
+                  {brand.copy.skipToContent}
+                </a>
+                <AtmosphereFallback />
+                <WebGLLayer />
+                <Header />
+              </SiteChrome>
               <main id="main" tabIndex={-1} className="outline-none">
                 {children}
               </main>
-              <Footer />
-              <CartDrawer />
-              <CheckoutDialog />
-              <PageTransition />
-              <Preloader />
-              <GrainOverlay />
-              <Cursor />
+              <SiteChrome>
+                <Footer />
+                <CartDrawer />
+                <CheckoutDialog />
+                <PageTransition />
+                <Preloader />
+                <GrainOverlay />
+                <Cursor />
+              </SiteChrome>
             </SmoothScroll>
           </MotionProvider>
         </ThemeProvider>

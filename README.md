@@ -22,6 +22,7 @@ npm run build   # also validates every theme colour and its contrast
 | Checkout (totals, payment methods, placing an order) | `src/lib/checkout.ts`, `src/components/cart/CheckoutDialog.tsx` |
 | Order capture (server) | `src/app/api/orders/route.ts` |
 | Orders sheet script and setup guide | `google-apps-script/` |
+| Admin portal (`/admin`): page, actions, UI, text | `src/app/admin/`, `src/components/admin/`, `src/lib/admin/`, `src/config/admin.ts` |
 | Newsletter handler (placeholder) | `src/lib/newsletter.ts` |
 | Logo and emblems | `public/brand/` |
 | Product images | `public/images/products/<slug>/` |
@@ -141,6 +142,10 @@ In `src/config/brand.ts`:
 - `currency`: ISO code, e.g. `"PKR"`. `locale` controls number formatting (default `"en-PK"`).
 - `copy.checkout`: all checkout text, including the confirmation messages.
 
+### Admin portal
+
+`/admin` is a private, password-protected page (set `ADMIN_PASSWORD`) for handling orders: it lists them from the sheet, shows payment screenshots, and confirms or cancels orders. It isn't linked anywhere, isn't indexed, and renders without the storefront's chrome (`SiteChrome` in the root layout skips the `admin` segment). Its text is in `src/config/admin.ts`, kept out of `brand.ts` so it never ships to visitors. Details: [`google-apps-script/README.md`](google-apps-script/README.md#admin-portal).
+
 To add another payment method later (e.g. a card gateway), add it to `PaymentMethod` in `src/lib/checkout.ts`, give it copy in `brand.copy.checkout`, and handle it in `CheckoutDialog` and the orders route.
 
 ## Real images
@@ -159,7 +164,7 @@ Images go through `next/image` (AVIF/WebP), so full-size PNG/JPG sources are fin
 - Bottle cutouts, gallery and props (see above).
 - Notes in `src/data/products.ts` (prices are set; a price of `0` would show "Price on request").
 - `whatsapp`, `socials` and `siteUrl` in `src/config/brand.ts`.
-- `ORDERS_SCRIPT_URL` and `ORDERS_SCRIPT_SECRET`: orders can't be placed until they're set (see `google-apps-script/README.md`).
+- `ORDERS_SCRIPT_URL` and `ORDERS_SCRIPT_SECRET`: orders can't be placed until they're set (see `google-apps-script/README.md`). `ADMIN_PASSWORD` turns on the admin portal.
 - `src/lib/newsletter.ts`: connect a provider.
 - `src/data/reviews.ts`: the Reviews section stays hidden until real reviews are added. Never invent testimonials.
 
@@ -171,7 +176,7 @@ Every animation respects `prefers-reduced-motion`: no preloader, pinning, WebGL,
 
 1. Push the repository to GitHub (or GitLab/Bitbucket).
 2. On [vercel.com](https://vercel.com), choose **Add New → Project** and import the repository. Vercel detects Next.js; keep the defaults (build `npm run build`).
-3. Under **Environment Variables**, add `ORDERS_SCRIPT_URL` and `ORDERS_SCRIPT_SECRET` (on Netlify: **Site configuration → Environment variables**).
+3. Under **Environment Variables**, add `ORDERS_SCRIPT_URL`, `ORDERS_SCRIPT_SECRET` and `ADMIN_PASSWORD` (on Netlify: **Site configuration → Environment variables**).
 4. Deploy.
 5. Add your domain under **Settings → Domains**, then set `siteUrl` in `src/config/brand.ts` to it (used for canonical URLs, the sitemap, robots.txt and share images) and redeploy.
 

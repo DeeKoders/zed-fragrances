@@ -1,9 +1,10 @@
 /**
- * ZED Fragrances: order capture.
+ * ZED Fragrances: order capture and the admin portal's data.
  *
  * The website's /api/orders route (src/app/api/orders/route.ts) posts every order here. This script
  * adds one row per order to the "Orders" sheet, saves EasyPaisa / JazzCash payment screenshots to a
- * Drive folder (linked from the row) and emails you about the order.
+ * Drive folder (linked from the row) and emails you about the order. The admin portal (/admin) uses
+ * it to list orders, change their status and show payment screenshots.
  *
  * Setup: google-apps-script/README.md in the website repository.
  */
@@ -37,21 +38,105 @@ const HEADERS = [
 ];
 const STATUSES = ["New", "Verify payment", "Confirmed", "Dispatched", "Delivered", "Cancelled"];
 
-/** Receives an order from the website. */
+/** Every request from the website: a new order, or an admin portal action. */
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);
     if (body.secret !== SECRET) return reply({ ok: false, error: "Unauthorized" });
 
-    const order = body.order;
-    const screenshot = order.screenshot ? saveScreenshot(order.id, order.screenshot) : null;
-    addRow(order, screenshot);
-    if (NOTIFY_BY_EMAIL) notify(order, screenshot);
-    return reply({ ok: true });
+    switch (body.action) {
+      case "list":
+        return reply({ ok: true, orders: listOrders() });
+      case "status":
+        setStatus(body.id, body.status);
+        return reply({ ok: true });
+      case "screenshot":
+        return reply(Object.assign({ ok: true }, readScreenshot(body.id)));
+      default:
+        createOrder(body.order);
+        return reply({ ok: true });
+    }
   } catch (error) {
     console.error(error);
     return reply({ ok: false, error: String(error) });
   }
+}
+
+function createOrder(order) {
+  const screenshot = order.screenshot ? saveScreenshot(order.id, order.screenshot) : null;
+  addRow(order, screenshot);
+  if (NOTIFY_BY_EMAIL) notify(order, screenshot);
+}
+
+/** All orders, newest first. */
+function listOrders() {
+  const sheet = getSheet();
+  const count = sheet.getLastRow() - 1;
+  if (count < 1) return [];
+
+  const range = sheet.getRange(2, 1, count, HEADERS.length);
+  const formulas = range.getFormulas();
+  return range
+    .getValues()
+    .map((row, index) => ({
+      date: row[0] instanceof Date ? row[0].toISOString() : String(row[0]),
+      id: String(row[1]),
+      status: String(row[2]),
+      payment: String(row[3]),
+      name: String(row[4]),
+      phone: String(row[5]),
+      city: String(row[6]),
+      address: String(row[7]),
+      notes: String(row[8]),
+      items: String(row[9]),
+      subtotal: Number(row[10]) || 0,
+      delivery: Number(row[11]) || 0,
+      codFee: Number(row[12]) || 0,
+      total: Number(row[13]) || 0,
+      screenshot: Boolean(fileId(formulas[index][14])),
+    }))
+    .filter((order) => order.id)
+    .reverse();
+}
+
+function setStatus(id, status) {
+  if (STATUSES.indexOf(status) === -1) throw new Error("Unknown status: " + status);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    getSheet().getRange(findRow(id), 3).setValue(status);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** The order's payment screenshot as base64. Only files linked from the sheet can be read. */
+function readScreenshot(id) {
+  const file = fileId(getSheet().getRange(findRow(id), 15).getFormula());
+  if (!file) throw new Error("No screenshot for " + id);
+  const blob = DriveApp.getFileById(file).getBlob();
+  return { type: blob.getContentType(), data: Utilities.base64Encode(blob.getBytes()) };
+}
+
+function findRow(id) {
+  const sheet = getSheet();
+  const match = sheet
+    .getRange(2, 2, Math.max(sheet.getLastRow() - 1, 1), 1)
+    .createTextFinder(String(id))
+    .matchEntireCell(true)
+    .findNext();
+  if (!match) throw new Error("Order not found: " + id);
+  return match.getRow();
+}
+
+/** Drive file ID from the Screenshot column's =HYPERLINK("https://drive.google.com/file/d/<id>/…") formula. */
+function fileId(formula) {
+  const match = /\/d\/([\w-]+)/.exec(formula || "");
+  return match ? match[1] : null;
+}
+
+function getSheet() {
+  return SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME) || setup();
 }
 
 /** Opening the web app URL in a browser shows this, to check the deployment. */
@@ -129,7 +214,7 @@ function addRow(order, screenshot) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    (SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME) || setup()).appendRow(row);
+    getSheet().appendRow(row);
   } finally {
     lock.releaseLock();
   }

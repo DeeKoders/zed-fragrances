@@ -9,6 +9,7 @@ import {
   type Customer,
   type Screenshot,
 } from "@/lib/checkout";
+import { callOrdersScript, isRecord } from "@/lib/orders-script";
 import { MAX_QUANTITY, type CartItem } from "@/stores/cart";
 
 /** Base64 length of the largest screenshot accepted; MAX_UPLOAD in src/lib/screenshot.ts stays under it. */
@@ -17,8 +18,7 @@ const MAX_LINES = 20;
 /** No 0/O or 1/I. 32 symbols, so every byte maps without bias. */
 const ID_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
-const text = (value: unknown, max: number) => (typeof value === "string" ? value.trim().slice(0, max) : "");
+const text =(value: unknown, max: number) => (typeof value === "string" ? value.trim().slice(0, max) : "");
 
 function parseItem(value: unknown): CartItem | null {
   if (!isRecord(value)) return null;
@@ -71,13 +71,6 @@ const fail = (error: string, status: number) => Response.json({ error }, { statu
  * Needs ORDERS_SCRIPT_URL and ORDERS_SCRIPT_SECRET; see google-apps-script/README.md.
  */
 export async function POST(request: Request) {
-  const scriptUrl = process.env.ORDERS_SCRIPT_URL;
-  const secret = process.env.ORDERS_SCRIPT_SECRET;
-  if (!scriptUrl || !secret) {
-    console.error("[orders] ORDERS_SCRIPT_URL or ORDERS_SCRIPT_SECRET is not set.");
-    return fail("unavailable", 503);
-  }
-
   const body: unknown = await request.json().catch(() => null);
   if (!isRecord(body)) return fail("invalid", 400);
   const items = parseItems(body.items);
@@ -94,30 +87,19 @@ export async function POST(request: Request) {
 
   const id = orderId();
   const totals = orderTotals(order, payment);
-  const payload = {
-    secret,
-    order: {
-      id,
-      payment: paymentLabel(payment),
-      customer,
-      items: itemLines(order).join("\n"),
-      currency: brand.currency,
-      ...totals,
-      screenshot,
-    },
-  };
 
   try {
-    const response = await fetch(scriptUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(25_000),
+    await callOrdersScript("create", {
+      order: {
+        id,
+        payment: paymentLabel(payment),
+        customer,
+        items: itemLines(order).join("\n"),
+        currency: brand.currency,
+        ...totals,
+        screenshot,
+      },
     });
-    const result: unknown = await response.json().catch(() => null);
-    if (!response.ok || !isRecord(result) || result.ok !== true) {
-      throw new Error(`Apps Script answered ${response.status}: ${isRecord(result) ? String(result.error) : "not JSON"}`);
-    }
   } catch (error) {
     console.error(`[orders] ${id} was not recorded.`, error);
     return fail("failed", 502);

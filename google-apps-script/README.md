@@ -1,6 +1,8 @@
 # Orders → Google Sheets
 
-Every order placed on the website becomes a row in a Google Sheet. EasyPaisa / JazzCash payment screenshots are saved to a Google Drive folder and linked from the row, and you get an email for each order.
+Every order placed on the website becomes a row in a Google Sheet. EasyPaisa / JazzCash payment screenshots are saved to a Google Drive folder and linked from the row, and you get an email for each order. The [admin portal](#admin-portal) at `/admin` reads and updates the same sheet.
+
+> **Already set up before the admin portal existed?** Go to [Updating the script for the admin portal](#updating-the-script-for-the-admin-portal).
 
 ```
 Customer ──► /api/orders (the website's server)  ──►  Apps Script web app  ──►  "Orders" sheet row
@@ -83,7 +85,36 @@ Restart the dev server so it picks them up. `.env.local` is git-ignored, so the 
 3. **EasyPaisa / JazzCash:** place a second order and upload any image as the screenshot. Its row has Status **Verify payment**, and **View** in the Screenshot column opens the image.
 4. Delete both test rows (and the test screenshot in the Drive folder).
 
+## Admin portal
+
+`/admin` on the website (e.g. `https://zed-fragrances.netlify.app/admin`) is a private page for handling orders. Nothing on the site links to it, search engines are told not to index it, and it needs a password.
+
+**Set the password:** add `ADMIN_PASSWORD` next to the other two variables, in `.env` / `.env.local` and in Netlify, then restart the dev server or redeploy. Use something long, such as a passphrase of four or more words. A sign-in lasts 7 days on that device; changing the password signs every device out.
+
+**What it does:**
+
+- Lists every order, newest first, with filters (**Needs action** is the default: payments to verify and COD orders to confirm) and search by order ID, name, phone or city.
+- Opening an order shows the payment screenshot, the customer (with Call and WhatsApp links), the address, the items and the totals.
+- **Verify payment** orders: check the amount in your EasyPaisa / JazzCash app, then **Payment received, confirm**. **New** (COD) orders: confirm with the customer, then **Confirm order**. Either can be cancelled instead. Each change is written to the sheet straight away, and **Undo** puts it back.
+- After confirming, **Send confirmation on WhatsApp** opens a chat with the customer and a prefilled message (wording in `src/config/admin.ts`).
+- **Refresh** reloads the sheet, e.g. to see orders placed while the page was open.
+
+Dispatched and Delivered are still set in the sheet; the portal shows them.
+
+## Updating the script for the admin portal
+
+The portal needs the newer `Code.gs` (it adds the actions that list orders, change a status and fetch a screenshot). New orders keep working the whole time.
+
+1. In the sheet, open **Extensions → Apps Script**.
+2. Copy your current `const SECRET = "…";` line somewhere safe.
+3. Replace everything in `Code.gs` with the contents of [`Code.gs`](Code.gs) from this folder, then put your `SECRET` line back.
+4. **Save**, then **Deploy → Manage deployments →** pencil icon **→ Version: New version → Deploy**. The URL stays the same.
+5. Add `ADMIN_PASSWORD` (see [Admin portal](#admin-portal)) and redeploy the site.
+6. Open `/admin`, sign in and check that your orders appear.
+
 ## Handling orders
+
+Use the [admin portal](#admin-portal) day to day; the sheet works too:
 
 - New orders are added at the bottom of the sheet. Use **Data → Create a filter** to sort or filter, e.g. to show only "Verify payment".
 - **EasyPaisa / JazzCash:** open the screenshot and check that the amount and sender match a payment in your EasyPaisa or JazzCash app. Then set the Status to **Confirmed** and message the customer. The site tells them confirmation takes about 1 working day.
@@ -124,5 +155,8 @@ When an order fails, the customer sees "We couldn't place your order" with a lin
 | `Apps Script answered …: not JSON` | "Who has access" isn't **Anyone**, or the URL isn't the `/exec` one from **Deploy → Manage deployments**. |
 | A script change has no effect | Publish a new version (see "Changing the script later"). |
 | No order emails | Check spam, check that `NOTIFY_BY_EMAIL` is `true`, and note the limit of 100 emails a day on a free account (orders are still saved). |
+| `/admin` says "Sign-in is off" | `ADMIN_PASSWORD` isn't set where the site runs. Add it and redeploy (or restart the dev server). |
+| `/admin` says "Couldn't load orders" with `no order list` or `Cannot read properties of undefined` | The script is the older version. Follow [Updating the script for the admin portal](#updating-the-script-for-the-admin-portal). |
+| A screenshot says "Couldn't load the screenshot" | Its Drive file was deleted or moved to the trash, or the Screenshot cell's link was edited. |
 
 The website shrinks screenshots before upload (to 2000px at most), so large phone screenshots work. Files that can't be read, or that are over 10 MB, are refused with a message.
